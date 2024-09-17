@@ -31,14 +31,14 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
                     b.Property<string>("Author")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("LastUpdateDate")
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -46,7 +46,7 @@ namespace Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("PagesCount")
+                    b.Property<int?>("PagesCount")
                         .HasColumnType("int");
 
                     b.Property<string>("PublisherId")
@@ -54,7 +54,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Summary")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
@@ -62,7 +61,7 @@ namespace Data.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Book", (string)null);
+                    b.ToTable("Book");
                 });
 
             modelBuilder.Entity("Data.Models.ComentaryModel", b =>
@@ -94,7 +93,37 @@ namespace Data.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Comentary", (string)null);
+                    b.ToTable("Comentary");
+                });
+
+            modelBuilder.Entity("Data.Models.HistoryModel", b =>
+                {
+                    b.Property<int>("HistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoryId"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsFavorite")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("LastPageRead")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("HistoryId");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("History");
                 });
 
             modelBuilder.Entity("Data.Models.PageModel", b =>
@@ -120,7 +149,7 @@ namespace Data.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("Page", (string)null);
+                    b.ToTable("Page");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -343,6 +372,25 @@ namespace Data.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
                         .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Data.Models.HistoryModel", b =>
+                {
+                    b.HasOne("Data.Models.BookModel", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

@@ -15,6 +15,7 @@ namespace Data.Context
         public DbSet<BookModel> Book { get; set; }
         public DbSet<PageModel> Page { get; set; }
         public DbSet<ComentaryModel> Comentary { get; set; }
+        public DbSet<HistoryModel> History { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,12 @@ namespace Data.Context
                 .HasOne(c => c.Book)
                 .WithMany(b => b.Commentaries)
                 .HasForeignKey(c => c.BookId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ComentaryModel>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PageModel>()
@@ -38,10 +45,16 @@ namespace Data.Context
                 .HasForeignKey(b => b.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ComentaryModel>()
-                .HasOne(c => c.User)
+            modelBuilder.Entity<HistoryModel>()
+                .HasOne(h => h.User)
                 .WithMany()
-                .HasForeignKey(c => c.PublisherId)
+                .HasForeignKey(h => h.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<HistoryModel>()
+                .HasOne(h => h.Book)
+                .WithMany()
+                .HasForeignKey(h => h.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

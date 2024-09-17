@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class EcleticStoriesDataBaseCreation : Migration
+    public partial class EStoriesDBCreated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -164,11 +164,11 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PublisherId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Author = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Summary = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Summary = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PagesCount = table.Column<int>(type: "int", nullable: false)
+                    PagesCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -203,6 +203,34 @@ namespace Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Comentary_Book_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Book",
+                        principalColumn: "BookId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "History",
+                columns: table => new
+                {
+                    HistoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    IsFavorite = table.Column<bool>(type: "bit", nullable: true),
+                    LastPageRead = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_History", x => x.HistoryId);
+                    table.ForeignKey(
+                        name: "FK_History_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_History_Book_BookId",
                         column: x => x.BookId,
                         principalTable: "Book",
                         principalColumn: "BookId",
@@ -285,6 +313,16 @@ namespace Data.Migrations
                 column: "PublisherId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_History_BookId",
+                table: "History",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_History_UserId",
+                table: "History",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Page_BookId",
                 table: "Page",
                 column: "BookId");
@@ -310,6 +348,9 @@ namespace Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Comentary");
+
+            migrationBuilder.DropTable(
+                name: "History");
 
             migrationBuilder.DropTable(
                 name: "Page");
