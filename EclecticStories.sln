@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{451B787E-10F1-4A36-84F4-A4E29A2D26B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{9885DBA9-23B4-4D7B-8546-6C376ABE5890}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{9DD8B02D-8661-4038-88CD-6F302EAB8EE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{451B787E-10F1-4A36-84F4-A4E29A2D26B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451B787E-10F1-4A36-84F4-A4E29A2D26B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451B787E-10F1-4A36-84F4-A4E29A2D26B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451B787E-10F1-4A36-84F4-A4E29A2D26B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9885DBA9-23B4-4D7B-8546-6C376ABE5890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9885DBA9-23B4-4D7B-8546-6C376ABE5890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9885DBA9-23B4-4D7B-8546-6C376ABE5890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9885DBA9-23B4-4D7B-8546-6C376ABE5890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DD8B02D-8661-4038-88CD-6F302EAB8EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DD8B02D-8661-4038-88CD-6F302EAB8EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DD8B02D-8661-4038-88CD-6F302EAB8EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DD8B02D-8661-4038-88CD-6F302EAB8EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {93747A7B-2E6C-4CEE-BDDB-FDE51F96304A}
+	EndGlobalSection
+EndGlobal
