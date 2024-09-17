@@ -1,4 +1,8 @@
+using Business.DataRepository;
+using Business.Services;
+using Business.Services.Base;
 using Data.Context;
+using Data.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,7 +34,19 @@ namespace Presentation
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            # region Automapper and dependency injection instances
             builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
+            builder.Services.AddScoped<IPageRepository, PageRepository>();
+            builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
+            builder.Services.AddScoped<ICommentaryRepository, CommentaryRepository>();
+
+            builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IPageService, PageService>();
+            builder.Services.AddScoped<IHistoryService, HistoryService>();
+            builder.Services.AddScoped<ICommentaryService, CommentaryService>();
+            #endregion
 
             var app = builder.Build();
 
