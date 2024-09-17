@@ -6,26 +6,26 @@ namespace Presentation.Controllers.Base
     {
         public void PopUpInfo(string content)
         {
-            ViewData["info"] = "info";
-            ViewData["content"] = content;
+            TempData["info"] = "info";
+            TempData["content"] = content;
         }
 
         public void PopUpWarning(string content)
         {
-            ViewData["warning"] = "warning";
-            ViewData["content"] = content;
+            TempData["warning"] = "warning";
+            TempData["content"] = content;
         }
 
         public void PopUpError(string content)
         {
-            ViewData["error"] = "error";
-            ViewData["content"] = content;
+            TempData["error"] = "error";
+            TempData["content"] = content;
         }
 
-        public void PopUpSucess(string content)
+        public void PopUpSuccess(string content)
         {
-            ViewData["success"] = "success";
-            ViewData["content"] = content;
+            TempData["success"] = "success";
+            TempData["content"] = content;
         }
     }
 }

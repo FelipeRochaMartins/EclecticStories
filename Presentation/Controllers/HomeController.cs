@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Controllers.Base;
 using Presentation.Models;
 using System.Diagnostics;
 
 namespace Presentation.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 
