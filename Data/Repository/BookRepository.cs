@@ -2,6 +2,7 @@
 using Business.DataRepository;
 using Business.Models;
 using Data.Context;
+using Data.Migrations;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,8 @@ namespace Data.Repository
             {
                 var bookEntity = _mapper.Map<BookModel>(newBook);
 
+                bookEntity.CreatedDate = DateTime.Now;
+
                 await _context.Book.AddAsync(bookEntity);
 
                 await _context.SaveChangesAsync();
@@ -33,10 +36,10 @@ namespace Data.Repository
             catch (Exception)
             {
                 return 0;
-            } 
+            }
         }
 
-        public async Task<(List<BookBusiness> Book, int TotalCount)> GetBooksPagedAsync(int pageNumber, int pageSize)
+        public async Task<(List<BookBusiness> Book, int TotalCount)> GetBooksPagedAsync(string searchTerm, int pageNumber, int pageSize)
         {
             var query = _context.Book
                 .Select(b => new BookBusiness
@@ -44,6 +47,11 @@ namespace Data.Repository
                     BookId = b.BookId,
                     Name = b.Name
                 });
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(b => b.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
 
             var totalCount = await query.CountAsync();
 
@@ -54,6 +62,58 @@ namespace Data.Repository
                 .ToListAsync();
 
             return (books, totalCount);
+        }
+
+        public async Task<BookBusiness> GetBookByIdAsync(int id)
+        {
+            BookModel? book = await _context.Book.FirstOrDefaultAsync(b => b.BookId == id);
+            return _mapper.Map<BookBusiness>(book);
+        }
+
+        public async Task<bool> DeleteBookByIdAsync(int id)
+        {
+            try
+            {
+                BookModel? bookDelete = await _context.Book.FirstOrDefaultAsync(b => b.BookId == id);
+
+                if (bookDelete != null)
+                {
+                    _context.Book.Remove(bookDelete);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Edit(BookBusiness bookToEdit)
+        {
+            try
+            {
+                BookModel? bookUpdate = await _context.Book.FirstOrDefaultAsync(b => b.BookId == bookToEdit.BookId);
+
+                if (bookUpdate != null)
+                {
+                    _mapper.Map(bookToEdit, bookUpdate);
+
+                    bookUpdate.LastUpdateDate = DateTime.Now;
+
+                    _context.Book.Update(bookUpdate);   
+                    _context.SaveChanges();
+
+                    return true;    
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

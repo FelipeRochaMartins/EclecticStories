@@ -5,55 +5,55 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Books</h1>
+<h1>Library</h1>
 
 <p>
     <a class="btn btn-primary" asp-action="New">New Book</a>
 </p>
 
-<!-- Container principal para o grid -->
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Search books..." value="@ViewData["CurrentFilter"]" />
+        <button type="submit" class="btn btn-outline-secondary">Search</button>
+    </div>
+</form>
+
 <div class="row">
     @if (Model.Books != null && Model.Books.Any())
     {
         @foreach (var item in Model.Books)
         {
-            // Obter o caminho da capa do livro
             string coverPath = await _bookCoverService.GetBookCoverAsync(item.BookId);
 
-            // Verificar se o caminho da capa está vazio
             var imgSrc = string.IsNullOrEmpty(coverPath)
-            ? Url.Content("~/images/placeholder.jpg") // Caminho para a imagem de placeholder cinza
+            ? Url.Content("~/images/placeholder.jpg")
             : Url.Content("~/images/" + coverPath);
 
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="col-sm-6 col-md-3 col-lg-2 mb-4">
                 <div class="card h-100">
-                    <!-- Exibe a imagem da capa do livro com o BookId escondido -->
-                    <img src="@imgSrc"
-                         data-book-id="@item.BookId"
-                         class="card-img-top"
-                         alt="Cover for @item.Name"
-                         style="aspect-ratio: 3 / 5; object-fit: cover;" />
 
-                    <!-- Corpo do card com o nome do livro -->
+                    <a asp-action="Book" asp-route-id="@item.BookId">
+                        <img src="@imgSrc"
+                             data-book-id="@item.BookId"
+                             class="card-img-top"
+                             alt="Cover for @item.Name"
+                             style="max-width: 100%; height: auto; aspect-ratio: 3.5 / 5; object-fit: cover;" />
+                    </a>
+
+                    <a asp-action="Book" asp-route-id="@item.BookId" class="text-decoration-none text-black">
                     <div class="card-body text-center">
                         <h5 class="card-title">
                             @Html.DisplayFor(modelItem => item.Name)
                         </h5>
                     </div>
+                    </a>
 
-                    <!-- Ações (Editar, Detalhes, Deletar) -->
-                    <div class="card-footer text-center">
-                        <a asp-action="Edit" asp-route-id="@item.BookId" class="btn btn-sm btn-warning">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.BookId" class="btn btn-sm btn-info">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.BookId" class="btn btn-sm btn-danger">Delete</a>
-                    </div>
                 </div>
             </div>
         }
     }
 </div>
 
-<!-- Paginação -->
 <div class="d-flex justify-content-between mt-4">
     <ul class="pagination">
         @if (Model.PageNumber > 1)

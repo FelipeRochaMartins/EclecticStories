@@ -23,5 +23,15 @@ namespace Business.Services
         {
             return await _bookCoverRepository.SaveBookCoverAsync(cover, bookId);
         }
+
+        public async Task<bool> EditBookCoverAsync(IFormFile cover, int bookId)
+        {
+            return await _bookCoverRepository.EditBookCoverAsync(cover, bookId);
+        }
+
+        public async Task<bool> DeleteBookCoverAsync(int id)
+        {
+            return await _bookCoverRepository.DeleteBookCoverAsync(id);
+        }
     }
 }

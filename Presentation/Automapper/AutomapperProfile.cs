@@ -10,7 +10,9 @@ namespace Presentation.Automapper
         public AutomapperProfile()
         {
             CreateMap<BookBusiness, BookViewModel>().ReverseMap();
-            CreateMap<BookBusiness, BookModel>().ReverseMap();
+            CreateMap<BookBusiness, BookModel>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+                .ReverseMap();
 
             CreateMap<BookCoverBusiness, BookCoverModel>().ReverseMap();
         }

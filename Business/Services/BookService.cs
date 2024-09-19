@@ -19,9 +19,24 @@ namespace Business.Services
             return await _bookRepository.AddAsync(newBook);
         }
 
-        public async Task<(List<BookBusiness> Book, int TotalCount)> GetBooksPagedAsync(int pageNumber, int pageSize)
+        public async Task<(List<BookBusiness> Book, int TotalCount)> GetBooksPagedAsync(string searchTerm, int pageNumber, int pageSize)
         {
-            return await _bookRepository.GetBooksPagedAsync(pageNumber, pageSize);
+            return await _bookRepository.GetBooksPagedAsync(searchTerm, pageNumber, pageSize);
+        }
+
+        public async Task<BookBusiness> GetBookByIdAsync(int id)
+        {
+            return await _bookRepository.GetBookByIdAsync(id);
+        }
+
+        public async Task<bool> DeleteBookByIdAsync(int id)
+        {
+            return await _bookRepository.DeleteBookByIdAsync(id);
+        }
+
+        public async Task<bool> Edit(BookBusiness bookToEdit)
+        {
+            return await _bookRepository.Edit(bookToEdit);
         }
     }
 }

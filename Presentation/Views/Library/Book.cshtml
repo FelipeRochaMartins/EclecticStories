@@ -1,0 +1,54 @@
+﻿@model Business.Models.BookBusiness
+@inject IBookCoverService _bookCoverService
+
+@{
+    ViewData["Title"] = Model.Name;
+
+    string coverPath = await _bookCoverService.GetBookCoverAsync(Model.BookId);
+
+    var imgSrc = string.IsNullOrEmpty(coverPath)
+    ? Url.Content("~/images/placeholder.jpg")
+    : Url.Content("~/images/" + coverPath);
+}
+
+<div class="row p-1" style="background: linear-gradient(to bottom, #000000, #ffffff); min-height: 200px; width: 100%; margin: 0;">
+    <div class="col-md-4" style="display: flex; justify-content: center; align-items: center;">
+        <img src="@imgSrc" alt="Book Cover" class="card-img-top" style="max-width: 60%; height: auto; aspect-ratio: 3.5 / 5; object-fit: cover;" />
+    </div>
+
+    <div class="col-md-8 d-flex flex-column justify-content-center row">
+        <h4 style="font-size: 1.2rem;">@Html.DisplayFor(model => model.Name)</h4>
+        <p><strong>Author:</strong> @Html.DisplayFor(model => model.Author)</p>
+
+        <div class="row mb-2">
+            <div class="col-sm-4">
+                <p><strong>Pages:</strong> @Html.DisplayFor(model => model.PagesCount)</p>
+            </div>
+            <div class="col-sm-4">
+                <p><strong>Last Updated:</strong> @Html.DisplayFor(model => model.LastUpdateDate)</p>
+            </div>
+            <div class="col-sm-4">
+                <p><strong>Created Date:</strong> @Html.DisplayFor(model => model.CreatedDate)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+
+    @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary" }) 
+    
+    @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger" })
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="mt-4">
+            <h5>Summary</h5>
+            <p class="text-justify">@Html.DisplayFor(model => model.Summary)</p>
+        </div>
+    </div>
+</div>
+
+

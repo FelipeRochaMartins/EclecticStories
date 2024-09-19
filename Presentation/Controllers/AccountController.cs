@@ -35,6 +35,7 @@ namespace Presentation.Controllers
 
                     if (result.Succeeded)
                     {
+                        PopUpInfo($"{User.Identity?.Name} logged in");
                         return RedirectToAction(nameof(HomeController.Index), "Home");
                     }
                     else
@@ -61,7 +62,7 @@ namespace Presentation.Controllers
             var username = User.Identity?.Name;
 
             await _signInManager.SignOutAsync();
-            PopUpSuccess($"User {username} successfully logged out");
+            PopUpInfo($"User {username} successfully logged out");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 

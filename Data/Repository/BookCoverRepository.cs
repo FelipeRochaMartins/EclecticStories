@@ -11,6 +11,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Data.Repository
 {
@@ -64,19 +65,19 @@ namespace Data.Repository
             {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(cover.FileName);
 
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                string imagesFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
 
-                if (!Directory.Exists(uploadsFolder))
+                if (!Directory.Exists(imagesFolder))
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    Directory.CreateDirectory(imagesFolder);
                 }
 
-                string filePath = Path.Combine(uploadsFolder, fileName);
+                string filePath = Path.Combine(imagesFolder, fileName);
 
                 using (var image = Image.Load<Rgba32>(cover.OpenReadStream()))
                 {
-                    int newWidth = 300;
-                    int newHeight = (int)(newWidth / 3.0 * 5.0);
+                    int newWidth = 350;
+                    int newHeight = (int)(newWidth / 3.5 * 5);
 
                     image.Mutate(x => x.Resize(newWidth, newHeight));
 
@@ -92,6 +93,69 @@ namespace Data.Repository
             }
 
             return bookCover;
+        }
+
+        public async Task<bool> EditBookCoverAsync(IFormFile cover, int bookId)
+        {
+            string? path = await _context.BookCover
+                                    .Where(bc => bc.BookId == bookId)
+                                    .Select(bc => bc.CoverPath)
+                                    .FirstOrDefaultAsync();
+
+            if (path != null)
+            {
+                string imagesFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+
+                string filePath = Path.Combine(imagesFolder, path);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await cover.CopyToAsync(stream);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteBookCoverAsync(int id)
+        {
+            try
+            {
+                BookCoverModel? coverDelete = await _context.BookCover.FirstOrDefaultAsync(b => b.BookId == id);
+
+                if (coverDelete != null)
+                {
+                    _context.BookCover.Remove(coverDelete);
+                    await _context.SaveChangesAsync();
+
+                    if (coverDelete.CoverPath != null)
+                    {
+                        string imagesFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+
+                        string filePath = Path.Combine(imagesFolder, coverDelete.CoverPath);
+
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+
+                            return true;
+                        }
+                    }
+                    return true;
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

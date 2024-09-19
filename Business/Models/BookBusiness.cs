@@ -24,7 +24,6 @@
             Summary = summary;
             PagesCount = null;
             LastUpdateDate = DateTime.Now;
-            CreatedDate = DateTime.Now;
         }
     }
 }

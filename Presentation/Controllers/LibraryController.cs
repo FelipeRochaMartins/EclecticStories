@@ -8,17 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Controllers.Base;
 using Presentation.Models;
+using System.Net;
 
 namespace Presentation.Controllers
 {
-    public class BookController : BaseController
+    public class LibraryController : BaseController
     {
         private readonly IMapper _mapper;
         private readonly IBookService _bookService; 
         private readonly IBookCoverService _bookCoverService;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public BookController(IMapper mapper, IBookService bookService, IBookCoverService bookCoverService, UserManager<IdentityUser> userManager)
+        public LibraryController(IMapper mapper, IBookService bookService, IBookCoverService bookCoverService, UserManager<IdentityUser> userManager)
         {
             _mapper = mapper;
             _bookService = bookService;
@@ -26,9 +27,12 @@ namespace Presentation.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 1)
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchTerm, int pageNumber = 1, int pageSize = 3)
         {
-            var (books, totalCount) = await _bookService.GetBooksPagedAsync(pageNumber, pageSize);
+            ViewData["CurrentFilter"] = searchTerm;
+
+            var (books, totalCount) = await _bookService.GetBooksPagedAsync(searchTerm, pageNumber, pageSize);
 
             var viewModel = new BookViewModelList
             {
@@ -106,5 +110,82 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Book(int id)
+        {
+            BookBusiness? book = await _bookService.GetBookByIdAsync(id);
+
+            if (book != null)
+            {
+                return View(book);
+            }
+
+            PopUpError("Unable To Find This Book.");
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (await _bookCoverService.DeleteBookCoverAsync(id))
+            {
+                if (await _bookService.DeleteBookByIdAsync(id))
+                {
+                    PopUpInfo("Successfully deleted book");
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            
+            PopUpError("The Book Cannot Be Deleted");
+            return RedirectToAction("Book", new { id = id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            BookViewModel book = _mapper.Map<BookViewModel>(await _bookService.GetBookByIdAsync(id));
+
+            return View(book);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(BookViewModel book)
+        {
+            try
+            {
+                BookBusiness bookToEdit = _mapper.Map<BookBusiness>(book);
+
+                if (ModelState.IsValid)
+                {
+                    if (await _bookService.Edit(bookToEdit))
+                    {
+                        if (book.Cover != null && book.Cover.Length > 0)
+                        {
+                            if (await _bookCoverService.EditBookCoverAsync(book.Cover, bookToEdit.BookId))
+                            {
+                                PopUpInfo("The book was edited with his cover");
+                                return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                            }
+
+                            PopUpWarning("An error occurred while saving the book cover");
+                            PopUpSuccess("The book was successfully edited without his cover.");
+                            return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                        }
+
+                        PopUpSuccess("The book was successfully edited without his cover.");
+                        return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                    }
+                }
+
+                PopUpError("An error occurred while editing the book");
+                return View(book);
+            }
+            catch (Exception) 
+            {
+                PopUpError("An exception occurred while editing the book");
+                return View(book);
+            }
+        }
     }
 }
