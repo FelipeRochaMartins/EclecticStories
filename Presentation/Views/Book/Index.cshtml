@@ -1,0 +1,80 @@
+﻿@model Presentation.Models.BookViewModelList
+@inject IBookCoverService _bookCoverService
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Books</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="New">New Book</a>
+</p>
+
+<!-- Container principal para o grid -->
+<div class="row">
+    @if (Model.Books != null && Model.Books.Any())
+    {
+        @foreach (var item in Model.Books)
+        {
+            // Obter o caminho da capa do livro
+            string coverPath = await _bookCoverService.GetBookCoverAsync(item.BookId);
+
+            // Verificar se o caminho da capa está vazio
+            var imgSrc = string.IsNullOrEmpty(coverPath)
+            ? Url.Content("~/images/placeholder.jpg") // Caminho para a imagem de placeholder cinza
+            : Url.Content("~/images/" + coverPath);
+
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <!-- Exibe a imagem da capa do livro com o BookId escondido -->
+                    <img src="@imgSrc"
+                         data-book-id="@item.BookId"
+                         class="card-img-top"
+                         alt="Cover for @item.Name"
+                         style="aspect-ratio: 3 / 5; object-fit: cover;" />
+
+                    <!-- Corpo do card com o nome do livro -->
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </h5>
+                    </div>
+
+                    <!-- Ações (Editar, Detalhes, Deletar) -->
+                    <div class="card-footer text-center">
+                        <a asp-action="Edit" asp-route-id="@item.BookId" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.BookId" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.BookId" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- Paginação -->
+<div class="d-flex justify-content-between mt-4">
+    <ul class="pagination">
+        @if (Model.PageNumber > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@(Model.PageSize)">Previous</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@(Model.PageSize)">@i</a>
+            </li>
+        }
+
+        @if (Model.PageNumber < Model.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@(Model.PageSize)">Next</a>
+            </li>
+        }
+    </ul>
+</div>

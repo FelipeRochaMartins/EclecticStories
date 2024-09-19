@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Business.Models;
+using Data.Models;
+using Presentation.Models;
 
 namespace Presentation.Automapper
 {
@@ -6,7 +9,10 @@ namespace Presentation.Automapper
     {
         public AutomapperProfile()
         {
-            
+            CreateMap<BookBusiness, BookViewModel>().ReverseMap();
+            CreateMap<BookBusiness, BookModel>().ReverseMap();
+
+            CreateMap<BookCoverBusiness, BookCoverModel>().ReverseMap();
         }
     }
 }

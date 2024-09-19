@@ -38,11 +38,13 @@ namespace Presentation
             builder.Services.AddAutoMapper(typeof(Program));
 
             builder.Services.AddScoped<IBookRepository, BookRepository>();
+            builder.Services.AddScoped<IBookCoverRepository, BookCoverRepository>();
             builder.Services.AddScoped<IPageRepository, PageRepository>();
             builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
             builder.Services.AddScoped<ICommentaryRepository, CommentaryRepository>();
 
             builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IBookCoverService, BookCoverService>();
             builder.Services.AddScoped<IPageService, PageService>();
             builder.Services.AddScoped<IHistoryService, HistoryService>();
             builder.Services.AddScoped<ICommentaryService, CommentaryService>();

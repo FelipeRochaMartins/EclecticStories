@@ -36,5 +36,7 @@ namespace Data.Models
         public virtual ICollection<PageModel> Pages { get; set; }
 
         public int? PagesCount { get; set; }
+
+        public virtual BookCoverModel BookCover { get; set; }
     }
 }
