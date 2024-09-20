@@ -38,7 +38,7 @@ namespace Data.Context
                 .HasOne(p => p.Book)
                 .WithMany(b => b.Pages)
                 .HasForeignKey(p => p.BookId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BookModel>()
                 .HasOne(b => b.Publisher)

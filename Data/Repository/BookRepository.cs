@@ -115,5 +115,36 @@ namespace Data.Repository
                 return false;
             }
         }
+
+        public async Task<int> GetTotalPagesAsync(int id)
+        {
+            int? totalPages = await _context.Book
+                                    .Where(b => b.BookId == id)
+                                    .Select(b => b.PagesCount)
+                                    .FirstOrDefaultAsync();
+
+            if (totalPages == null)
+            {
+                return 0;
+            }
+
+            return totalPages.Value;
+        }
+
+        public async Task<bool> UpdatePagesCountAsync(int id, int count)
+        {
+            var book = await _context.Book.FindAsync(id);
+
+            if (book == null)
+            {
+                return false;
+            }
+
+            book.PagesCount = count;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

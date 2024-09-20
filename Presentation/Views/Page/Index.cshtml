@@ -1,0 +1,43 @@
+﻿@model Presentation.Models.PageViewModel
+@inject IBookService _bookService;
+
+@{
+    ViewData["Title"] = Model.Title;
+    bool hasPrevious = (Model.PageNumber - 1) > 0;
+    bool hasNext = (await _bookService.GetTotalPagesAsync(Model.BookId) != Model.PageNumber);
+}
+<style>
+    .preserve-format {
+        white-space: pre-wrap;
+    }
+</style>
+
+<div class="row-cols-auto container">
+    <h2 class="text-dark">@Model.PageNumber - @Model.Title</h2>
+    <p class="text-black preserve-format">@Model.Content</p>
+</div>
+
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center">
+        @if (hasPrevious)
+        {
+            @Html.ActionLink("Previous", "Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber - 1 }, new { @class = "btn btn-primary mx-1" })
+        }
+        else
+        {
+            <button disabled class="btn btn-primary mx-1">Previous</button>
+        }
+
+        @Html.ActionLink("Return to Book", "Book", "Library", new { id = Model.BookId }, new { @class = "btn btn-primary mx-1" })
+
+        @if (hasNext)
+        {
+            @Html.ActionLink("Next", "Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber + 1 }, new { @class = "btn btn-primary mx-1" })
+        }
+        else
+        {
+            <button disabled class="btn btn-primary mx-1">Next</button>
+        }
+    </div>
+</div>
+

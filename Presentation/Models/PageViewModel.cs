@@ -1,18 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Data.Models
+namespace Presentation.Models
 {
-    public class PageModel
+    public class PageViewModel
     {
-        [Key]
         public int PageId { get; set; }
-
-        [Required]
         public int BookId { get; set; }
-        public virtual BookModel Book { get; set; }
-
-        [Required]
-        public int PageNumber { get; set; }
+        public int? PageNumber { get; set; }
 
         [Required]
         [MaxLength(30)]
@@ -21,8 +15,6 @@ namespace Data.Models
         [Required]
         [MaxLength(100000)]
         public string Content { get; set; }
-
-        [Required]
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
     }
 }

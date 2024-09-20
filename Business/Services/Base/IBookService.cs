@@ -9,5 +9,7 @@ namespace Business.Services.Base
         Task<BookBusiness> GetBookByIdAsync(int id);
         Task<bool> DeleteBookByIdAsync(int id);
         Task<bool> Edit(BookBusiness bookToEdit);
+        Task<int> GetTotalPagesAsync(int id);
+        Task<bool> UpdatePagesCountAsync(int id, int count);
     }
 }

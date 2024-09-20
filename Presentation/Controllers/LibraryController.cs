@@ -176,6 +176,9 @@ namespace Presentation.Controllers
                         PopUpSuccess("The book was successfully edited without his cover.");
                         return RedirectToAction("Book", new { id = bookToEdit.BookId });
                     }
+
+                    PopUpError("An error occurred while editing the book");
+                    return View(book);
                 }
 
                 PopUpError("An error occurred while editing the book");

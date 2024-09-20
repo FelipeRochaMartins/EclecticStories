@@ -15,6 +15,11 @@ namespace Presentation.Automapper
                 .ReverseMap();
 
             CreateMap<BookCoverBusiness, BookCoverModel>().ReverseMap();
+
+            CreateMap<PageBusiness, PageViewModel>().ReverseMap();
+            CreateMap<PageBusiness, PageModel>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+                .ReverseMap();
         }
     }
 }
