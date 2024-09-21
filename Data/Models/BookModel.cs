@@ -31,7 +31,7 @@ namespace Data.Models
         [Required]
         public DateTime? LastUpdateDate { get; set; }
 
-        public virtual ICollection<ComentaryModel> Commentaries { get; set; }
+        public virtual ICollection<CommentaryModel> Commentaries { get; set; }
 
         public virtual ICollection<PageModel> Pages { get; set; }
 

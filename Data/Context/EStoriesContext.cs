@@ -14,7 +14,7 @@ namespace Data.Context
 
         public DbSet<BookModel> Book { get; set; }
         public DbSet<PageModel> Page { get; set; }
-        public DbSet<ComentaryModel> Comentary { get; set; }
+        public DbSet<CommentaryModel> Commentary { get; set; }
         public DbSet<HistoryModel> History { get; set; }
         public DbSet<BookCoverModel> BookCover { get; set; }
 
@@ -22,17 +22,17 @@ namespace Data.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ComentaryModel>()
+            modelBuilder.Entity<CommentaryModel>()
                 .HasOne(c => c.Book)
                 .WithMany(b => b.Commentaries)
                 .HasForeignKey(c => c.BookId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ComentaryModel>()
+            modelBuilder.Entity<CommentaryModel>()
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.PublisherId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PageModel>()
                 .HasOne(p => p.Book)

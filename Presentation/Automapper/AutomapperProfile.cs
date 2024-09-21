@@ -20,6 +20,10 @@ namespace Presentation.Automapper
             CreateMap<PageBusiness, PageModel>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
                 .ReverseMap();
+
+            CreateMap<CommentaryBusiness, CommentaryViewModel>().ReverseMap();
+
+            CreateMap<CommentaryBusiness, CommentaryModel>().ReverseMap();
         }
     }
 }

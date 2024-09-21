@@ -4,13 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models
 {
-    public class ComentaryModel
+    public class CommentaryModel
     {
         [Key]
         public int CommentId { get; set; }
 
         [Required]
         public string PublisherId { get; set; }
+
+        [Required]
+        public string Username { get; set; }
 
         [Required]
         public int BookId { get; set; }
