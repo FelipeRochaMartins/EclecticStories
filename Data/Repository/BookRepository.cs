@@ -70,6 +70,16 @@ namespace Data.Repository
             return _mapper.Map<BookBusiness>(book);
         }
 
+        public async Task<string> GetBookNameByIdAsync(int id)
+        {
+            string? bookName = await _context.Book
+                                     .Where(b => b.BookId == id)
+                                     .Select(b => b.Name) 
+                                     .FirstOrDefaultAsync();
+
+            return bookName ?? string.Empty;
+        }
+
         public async Task<bool> DeleteBookByIdAsync(int id)
         {
             try

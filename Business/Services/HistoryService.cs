@@ -28,9 +28,9 @@ namespace Business.Services
             return _historyRepository.GetAlreadyExistAsync(userId, bookId);
         }
 
-        public Task<List<HistoryBusiness>> GetFavoriteHistoriesAsync(string userId, int bookId)
+        public Task<List<HistoryBusiness>> GetFavoriteHistoriesAsync(string userId)
         {
-            return _historyRepository.GetFavoriteHistoriesAsync(userId, bookId);
+            return _historyRepository.GetFavoriteHistoriesAsync(userId);
         }
 
         public Task<bool> UpdateFavoriteAsync(string userId, int bookId)
@@ -41,6 +41,18 @@ namespace Business.Services
         public Task<bool> UpdatePageAsync(string userId, int bookId, int pageNum)
         {
             return _historyRepository.UpdatePageAsync(userId, bookId, pageNum);
+        }
+
+        public async Task<bool> UpdatePageInHistoryService(string userId, int bookId, int pageNum)
+        {
+            if (await GetAlreadyExistAsync(userId, bookId))
+            {
+                return await UpdatePageAsync(userId, bookId, pageNum);
+            }
+            else
+            {
+                return await AddHistoryAsync(userId, bookId, pageNum);
+            }
         }
     }
 }

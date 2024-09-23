@@ -48,5 +48,10 @@ namespace Business.Services
         {
             return await _bookRepository.UpdatePagesCountAsync(id, count);
         }
+
+        public async Task<string> GetBookNameByIdAsync(int id)
+        {
+            return await _bookRepository.GetBookNameByIdAsync((int)id);
+        }
     }
 }

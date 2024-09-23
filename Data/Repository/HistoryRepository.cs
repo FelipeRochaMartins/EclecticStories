@@ -65,10 +65,10 @@ namespace Data.Repository
             return await _context.History.AnyAsync(h => h.UserId == userId && h.BookId == bookId);
         }
 
-        public async Task<List<HistoryBusiness>> GetFavoriteHistoriesAsync(string userId, int bookId)
+        public async Task<List<HistoryBusiness>> GetFavoriteHistoriesAsync(string userId)
         {
             List<HistoryModel> histModel = await _context.History
-                                     .Where(h => h.UserId == userId && h.BookId == bookId && h.IsFavorite)
+                                     .Where(h => h.UserId == userId && h.IsFavorite)
                                      .ToListAsync();
 
             return _mapper.Map<List<HistoryBusiness>>(histModel);

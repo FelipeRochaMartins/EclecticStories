@@ -11,5 +11,6 @@ namespace Business.DataRepository
         Task<bool> Edit(BookBusiness bookToEdit);
         Task<int> GetTotalPagesAsync(int id);
         Task<bool> UpdatePagesCountAsync(int id, int count);
+        Task<string> GetBookNameByIdAsync(int id);
     }
 }

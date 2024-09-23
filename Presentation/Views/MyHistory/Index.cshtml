@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Presentation.Models.HistoryViewModel>
+@inject IBookCoverService _bookCoverService
+@inject IBookService _bookService
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    @foreach (var book in Model)
+    {
+        string bookName = await _bookService.GetBookNameByIdAsync(book.BookId);
+        string coverPath = await _bookCoverService.GetBookCoverAsync(book.BookId);
+
+        var imgSrc = string.IsNullOrEmpty(coverPath)
+        ? Url.Content("~/images/placeholder.jpg")
+        : Url.Content("~/images/" + coverPath);
+
+        <div class="col-md-3 mb-4 mt-4">
+            <a href="@Url.Action("Book", "Library", new { id = book.BookId })" class="text-decoration-none">
+                <div class="card h-100">
+                    <div class="card-img-top" style="width: 100%; position: relative; padding-top: 143%; background-color: lightgray;">
+                        <img src="@imgSrc" alt="Book Cover" class="img-fluid card-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">@bookName</h5>
+                        <p class="card-text text-dark">Last Page Read: @book.LastPageRead</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

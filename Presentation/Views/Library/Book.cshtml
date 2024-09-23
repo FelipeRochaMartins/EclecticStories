@@ -37,6 +37,8 @@
 <div class="mt-4">
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 
+    @Html.ActionLink("Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+
     @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary" }) 
 
     @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger" })

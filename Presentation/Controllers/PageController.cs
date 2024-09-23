@@ -13,12 +13,14 @@ namespace Presentation.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IPageService _pageService;
+        private readonly IHistoryService _historyService;
         
-        public PageController(IMapper mapper, UserManager<IdentityUser> userManager, IPageService pageService)
+        public PageController(IMapper mapper, UserManager<IdentityUser> userManager, IPageService pageService, IHistoryService historyService)
         {
             _mapper = mapper;
             _userManager = userManager;
             _pageService = pageService;
+            _historyService = historyService;
         }
 
         [HttpGet]
@@ -29,7 +31,17 @@ namespace Presentation.Controllers
 
             if (page != null)
             {
-                // Insert Library Page Control here
+                string? userId = _userManager.GetUserId(User);
+
+                if (userId != null)
+                {
+                    bool result = await _historyService.UpdatePageInHistoryService(userId, bookId, pageNum);
+
+                    if (!result)
+                    {
+                        PopUpWarning("Due to an error, the page number is not being saved in your history");
+                    }
+                }
 
                 return View(page);
             }
