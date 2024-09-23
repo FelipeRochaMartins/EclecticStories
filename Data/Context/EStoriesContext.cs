@@ -50,13 +50,13 @@ namespace Data.Context
                 .HasOne(h => h.User)
                 .WithMany()
                 .HasForeignKey(h => h.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<HistoryModel>()
                 .HasOne(h => h.Book)
                 .WithMany()
                 .HasForeignKey(h => h.BookId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BookModel>()
                 .HasOne(b => b.BookCover)    

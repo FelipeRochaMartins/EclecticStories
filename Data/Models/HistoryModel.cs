@@ -19,7 +19,7 @@ namespace Data.Models
         public int BookId { get; set; }
         public virtual BookModel Book { get; set; }
 
-        public bool? IsFavorite { get; set; }
+        public bool IsFavorite { get; set; }
 
         public int? LastPageRead { get; set; }
     }

@@ -24,6 +24,9 @@ namespace Presentation.Automapper
             CreateMap<CommentaryBusiness, CommentaryViewModel>().ReverseMap();
 
             CreateMap<CommentaryBusiness, CommentaryModel>().ReverseMap();
+
+            CreateMap<HistoryBusiness, HistoryModel>().ReverseMap();
+            //CreateMap<HistoryBusiness, HistoryViewModel>().ReverseMap();
         }
     }
 }

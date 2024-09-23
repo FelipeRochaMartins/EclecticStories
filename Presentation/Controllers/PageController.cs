@@ -13,6 +13,7 @@ namespace Presentation.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IPageService _pageService;
+        
         public PageController(IMapper mapper, UserManager<IdentityUser> userManager, IPageService pageService)
         {
             _mapper = mapper;
@@ -28,6 +29,8 @@ namespace Presentation.Controllers
 
             if (page != null)
             {
+                // Insert Library Page Control here
+
                 return View(page);
             }
 

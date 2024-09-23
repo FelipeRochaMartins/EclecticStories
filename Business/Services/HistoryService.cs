@@ -1,4 +1,5 @@
 ﻿using Business.DataRepository;
+using Business.Models;
 using Business.Services.Base;
 
 namespace Business.Services
@@ -10,6 +11,36 @@ namespace Business.Services
         public HistoryService(IHistoryRepository historyRepository)
         {
             _historyRepository = historyRepository;
+        }
+
+        public Task<bool> AddHistoryAsync(string userId, int bookId)
+        {
+            return _historyRepository.AddHistoryAsync(userId, bookId);
+        }
+
+        public Task<bool> AddHistoryAsync(string userId, int bookId, int pageNum)
+        {
+            return _historyRepository.AddHistoryAsync(userId, bookId, pageNum);
+        }
+
+        public Task<bool> GetAlreadyExistAsync(string userId, int bookId)
+        {
+            return _historyRepository.GetAlreadyExistAsync(userId, bookId);
+        }
+
+        public Task<List<HistoryBusiness>> GetFavoriteHistoriesAsync(string userId, int bookId)
+        {
+            return _historyRepository.GetFavoriteHistoriesAsync(userId, bookId);
+        }
+
+        public Task<bool> UpdateFavoriteAsync(string userId, int bookId)
+        {
+            return _historyRepository.UpdateFavoriteAsync(userId, bookId); 
+        }
+
+        public Task<bool> UpdatePageAsync(string userId, int bookId, int pageNum)
+        {
+            return _historyRepository.UpdatePageAsync(userId, bookId, pageNum);
         }
     }
 }
