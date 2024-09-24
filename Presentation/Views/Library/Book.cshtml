@@ -45,31 +45,38 @@
     {
         @if (await _historyService.GetIsFavoriteBookAsync(userId, Model.BookId))
         {
-            @Html.ActionLink("Remove Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-warning" })
+            @Html.ActionLink("Remove Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-warning mx-2" })
         }
         else
         {
-            @Html.ActionLink("Add as Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Add as Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-primary mx-2" })
         }
     }
     
     @if (Model.PublisherId == userId || User.IsInRole("Admin"))
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary mx-2" })
 
-        @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger" })
+        @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger mx-2" })
 
-        @Html.ActionLink("Create Page", "New", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-success" })
+        @Html.ActionLink("Create Page", "New", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-success mx-2" })
     }
 
     @if (Model.PagesCount != null)
     {
-        @Html.ActionLink("Read", "Index", "Page", new { bookId = Model.BookId, pageNum = 1 }, new { @class = "btn btn-primary" })
+        @if (User.Identity.IsAuthenticated && ViewBag.LastPageRead != 0)
+        {
+            @Html.ActionLink("Continue Reading", "Index", "Page", new { bookId = Model.BookId, pageNum = ViewBag.LastPageRead }, new { @class = "btn btn-primary mx-2" })
+        }
+        else
+        {
+            @Html.ActionLink("Read", "Index", "Page", new { bookId = Model.BookId, pageNum = 1 }, new { @class = "btn btn-primary mx-2" })
+        }
 
-        @Html.ActionLink("View all Pages", "BookPages", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("View all Pages", "BookPages", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-primary mx-2" })
     }
 
-    @Html.ActionLink("View Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("View Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-primary mx-2" })
 
 </div>
 

@@ -19,13 +19,15 @@ namespace Presentation.Controllers
         private readonly IMapper _mapper;
         private readonly IBookService _bookService; 
         private readonly IBookCoverService _bookCoverService;
+        private readonly IHistoryService _historyService;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public LibraryController(IMapper mapper, IBookService bookService, IBookCoverService bookCoverService, UserManager<IdentityUser> userManager)
+        public LibraryController(IMapper mapper, IBookService bookService, IBookCoverService bookCoverService, IHistoryService historyService,UserManager<IdentityUser> userManager)
         {
             _mapper = mapper;
             _bookService = bookService;
             _bookCoverService = bookCoverService;
+            _historyService = historyService;
             _userManager = userManager;
         }
 
@@ -121,6 +123,20 @@ namespace Presentation.Controllers
 
             if (book != null)
             {
+                int lastRead = 0;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    string? userId = _userManager.GetUserId(User);
+
+                    if (userId != null)
+                    {
+                        lastRead = await _historyService.GetLastPageReadAsync(userId, id);
+                    }
+                }
+
+                ViewBag.LastPageRead = lastRead;
+
                 return View(book);
             }
 

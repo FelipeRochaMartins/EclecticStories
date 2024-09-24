@@ -76,9 +76,26 @@ namespace Data.Repository
 
         public async Task<bool> GetIsFavoriteBookAsync(string userId, int bookId)
         {
-            bool isFavorite = await _context.History.Where(h => h.UserId == userId && h.BookId == bookId).Select(h => h.IsFavorite).FirstOrDefaultAsync();
+            bool isFavorite = await _context.History
+                                    .Where(h => h.UserId == userId && h.BookId == bookId)
+                                    .Select(h => h.IsFavorite)
+                                    .FirstOrDefaultAsync();
 
             return isFavorite;
+        }
+
+        public async Task<int> GetLastPageReadAsync(string userId, int bookId)
+        {
+            int? lastRead = await _context.History
+                                    .Where(h => h.UserId == userId && h.BookId == bookId)
+                                    .Select(h => h.LastPageRead)
+                                    .FirstOrDefaultAsync();
+
+            if (lastRead == null)
+            {
+                return 0;
+            }
+             return lastRead.Value;
         }
 
         public async Task<bool> UpdateFavoriteAsync(string userId, int bookId)

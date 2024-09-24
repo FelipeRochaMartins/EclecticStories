@@ -55,7 +55,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> BookPages(int bookId, int pageNumber = 1, int pageSize = 2)
+        public async Task<IActionResult> BookPages(int bookId, int pageNumber = 1, int pageSize = 100)
         {
             ViewBag.BookId = bookId;
 
@@ -73,6 +73,7 @@ namespace Presentation.Controllers
                     PageNumber = p.PageNumber,
                     CreatedDate = p.CreatedDate
                 }).ToList(),
+
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize,

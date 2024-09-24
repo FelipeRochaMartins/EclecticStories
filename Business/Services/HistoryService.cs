@@ -38,6 +38,11 @@ namespace Business.Services
             return await _historyRepository.GetIsFavoriteBookAsync(userId, bookId);
         }
 
+        public Task<int> GetLastPageReadAsync(string userId, int bookId)
+        {
+            return _historyRepository.GetLastPageReadAsync(userId, bookId);
+        }
+
         public Task<bool> UpdateFavoriteAsync(string userId, int bookId)
         {
             return _historyRepository.UpdateFavoriteAsync(userId, bookId); 
