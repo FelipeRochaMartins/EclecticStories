@@ -80,6 +80,18 @@ namespace Data.Repository
             return bookName ?? string.Empty;
         }
 
+        public async Task<string> GetPublisherIdAsync(int id)
+        {
+            string? publisherId = await _context.Book.Where(b => b.BookId == id).Select(b => b.PublisherId).FirstOrDefaultAsync();
+
+            if (publisherId != null)
+            {
+                return publisherId;
+            }
+
+            return string.Empty;
+        }
+
         public async Task<bool> DeleteBookByIdAsync(int id)
         {
             try
@@ -101,7 +113,7 @@ namespace Data.Repository
             }
         }
 
-        public async Task<bool> Edit(BookBusiness bookToEdit)
+        public async Task<bool> EditAsync(BookBusiness bookToEdit)
         {
             try
             {

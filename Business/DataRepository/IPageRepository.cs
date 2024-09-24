@@ -6,5 +6,7 @@ namespace Business.DataRepository
     {
         Task<bool> AddPageAsync(PageBusiness newPage);
         Task<PageBusiness> GetPageAsync(int bookId, int pageId);
+        Task<PageBusiness> GetPageByIdAsync(int pageId);
+        Task<bool> EditAsync(PageBusiness page);
     }
 }

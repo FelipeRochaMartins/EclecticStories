@@ -34,9 +34,9 @@ namespace Business.Services
             return await _bookRepository.DeleteBookByIdAsync(id);
         }
 
-        public async Task<bool> Edit(BookBusiness bookToEdit)
+        public async Task<bool> EditAsync(BookBusiness bookToEdit)
         {
-            return await _bookRepository.Edit(bookToEdit);
+            return await _bookRepository.EditAsync(bookToEdit);
         }
 
         public async Task<int> GetTotalPagesAsync(int id)
@@ -52,6 +52,11 @@ namespace Business.Services
         public async Task<string> GetBookNameByIdAsync(int id)
         {
             return await _bookRepository.GetBookNameByIdAsync((int)id);
+        }
+
+        public async Task<string> GetPublisherIdAsync(int id)
+        {
+            return  await _bookRepository.GetPublisherIdAsync(id);
         }
     }
 }

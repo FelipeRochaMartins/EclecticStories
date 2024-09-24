@@ -4,6 +4,7 @@ using Business.Services.Base;
 using Data.Context;
 using Data.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -48,6 +49,8 @@ namespace Presentation
             builder.Services.AddScoped<IPageService, PageService>();
             builder.Services.AddScoped<IHistoryService, HistoryService>();
             builder.Services.AddScoped<ICommentaryService, CommentaryService>();
+
+            builder.Services.AddTransient<IMyEmailSender, MyEmailSender>();
             #endregion
 
             var app = builder.Build();

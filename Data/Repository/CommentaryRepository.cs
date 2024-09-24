@@ -46,5 +46,38 @@ namespace Data.Repository
 
             return comments;
         }
+
+        public async Task<bool> DeleteCommentaryAsync(int id)
+        {
+            try
+            {
+                CommentaryModel? commentaryDelete = await _context.Commentary.FirstOrDefaultAsync(c => c.CommentId == id);
+
+                if (commentaryDelete != null)
+                {
+                    _context.Commentary.Remove(commentaryDelete);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<string> GetPublisherIdAsync(int id)
+        {
+            string? publisherId = await _context.Commentary.Where(c => c.CommentId == id).Select(c => c.PublisherId).FirstOrDefaultAsync();
+
+            if (publisherId != null)
+            {
+                return publisherId;
+            }
+
+            return string.Empty;
+        }
     }
 }

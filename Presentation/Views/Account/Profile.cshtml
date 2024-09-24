@@ -1,0 +1,32 @@
+﻿@model Presentation.Models.UserProfileViewModel
+@inject UserManager<IdentityUser> _userManager
+
+@{
+    var user = await _userManager.GetUserAsync(User);
+
+    bool emailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">User Profile</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Profile Information</h4>
+            <hr>
+            <p><strong>Username:</strong> @Model.Username</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            @if (emailConfirmed)
+            {
+                <p class="text-success">Email confirmed</p>
+            }
+            else
+            {
+                <p class="text-warning">Email not confirmed, please confirm your email to use comments</p>
+                <form asp-action="ResendConfirmationEmail" method="post">
+                    <button type="submit" class="btn btn-primary">Resend Confirmation Email</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

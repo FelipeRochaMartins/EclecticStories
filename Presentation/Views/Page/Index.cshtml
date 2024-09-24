@@ -1,10 +1,14 @@
 ﻿@model Presentation.Models.PageViewModel
 @inject IBookService _bookService;
+@inject UserManager<IdentityUser> _userManager
 
 @{
     ViewData["Title"] = Model.Title;
     bool hasPrevious = (Model.PageNumber - 1) > 0;
     bool hasNext = (await _bookService.GetTotalPagesAsync(Model.BookId) != Model.PageNumber);
+
+    string? publisherId = await _bookService.GetPublisherIdAsync(Model.BookId);
+    string? userId = _userManager.GetUserId(User);
 }
 <style>
     .preserve-format {
@@ -15,6 +19,12 @@
 <div class="row-cols-auto container">
     <h2 class="text-dark">@Model.PageNumber - @Model.Title</h2>
     <p class="text-black preserve-format">@Model.Content</p>
+
+    @if (publisherId == userId || User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edit the Page", "Edit", "Page", new { pageId = Model.PageId }, new { @class = "btn btn-danger" })
+    }
+
 </div>
 
 <div class="container">

@@ -74,6 +74,13 @@ namespace Data.Repository
             return _mapper.Map<List<HistoryBusiness>>(histModel);
         }
 
+        public async Task<bool> GetIsFavoriteBookAsync(string userId, int bookId)
+        {
+            bool isFavorite = await _context.History.Where(h => h.UserId == userId && h.BookId == bookId).Select(h => h.IsFavorite).FirstOrDefaultAsync();
+
+            return isFavorite;
+        }
+
         public async Task<bool> UpdateFavoriteAsync(string userId, int bookId)
         {
             var history = await _context.History.FirstOrDefaultAsync(h => h.UserId == userId && h.BookId == bookId);

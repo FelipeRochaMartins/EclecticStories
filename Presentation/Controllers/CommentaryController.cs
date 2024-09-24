@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Business.Models;
+using Business.Services;
 using Business.Services.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Controllers.Base;
@@ -39,6 +41,7 @@ namespace Presentation.Controllers
             return View(cmtViewModel);
         }
 
+        [Authorize(Roles = "Admin, Publisher, User")]
         [HttpGet]
         public IActionResult New(int bookId)
         {
@@ -56,6 +59,7 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(AccountController.Login), "Account");
         }
 
+        [Authorize(Roles = "Admin, Publisher, User")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> New(CommentaryViewModel cmt)
@@ -96,6 +100,35 @@ namespace Presentation.Controllers
                 PopUpError("An Exception was occurred while posting the comment, try again");
                 return RedirectToAction("Index", "Library");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            string? userId = _userManager.GetUserId(User);
+            string? publisherId = await _commentaryService.GetPublisherIdAsync(id);
+
+            if (userId != null && publisherId != null)
+            {
+                if (userId == publisherId || User.IsInRole("Admin"))
+                {
+                    if (await _commentaryService.DeleteCommentaryAsync(id))
+                    {
+                        PopUpInfo("Comment deleted");
+                        return RedirectToAction("Index", "Library");
+                    }
+
+                    PopUpError("The Comment Cannot Be Deleted");
+                    return RedirectToAction("Index", "Library");
+                }
+
+                PopUpWarning("You are not allowed to delete this comment");
+                return RedirectToAction("Index", "Library");
+            }
+
+            PopUpError("The Comment Cannot Be Deleted");
+            return RedirectToAction("Index", "Library");
         }
     }
 }

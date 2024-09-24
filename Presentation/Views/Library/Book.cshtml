@@ -1,5 +1,7 @@
 ﻿@model Business.Models.BookBusiness
 @inject IBookCoverService _bookCoverService
+@inject IHistoryService _historyService
+@inject UserManager<IdentityUser> _userManager
 
 @{
     ViewData["Title"] = Model.Name;
@@ -9,6 +11,8 @@
     var imgSrc = string.IsNullOrEmpty(coverPath)
     ? Url.Content("~/images/placeholder.jpg")
     : Url.Content("~/images/" + coverPath);
+
+    string? userId = _userManager.GetUserId(User);
 }
 
 <div class="row p-1" style="background: linear-gradient(to bottom, #000000, #ffffff); min-height: 200px; width: 100%; margin: 0;">
@@ -37,20 +41,34 @@
 <div class="mt-4">
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 
-    @Html.ActionLink("Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+    @if (User.Identity.IsAuthenticated)
+    {
+        @if (await _historyService.GetIsFavoriteBookAsync(userId, Model.BookId))
+        {
+            @Html.ActionLink("Remove Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-warning" })
+        }
+        else
+        {
+            @Html.ActionLink("Add as Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+        }
+    }
+    
+    @if (Model.PublisherId == userId || User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary" })
 
-    @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary" }) 
+        @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger" })
 
-    @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger" })
-
-    @Html.ActionLink("Create Page", "New", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-success" })
-
-    @Html.ActionLink("View Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Create Page", "New", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-success" })
+    }
 
     @if (Model.PagesCount != null)
     {
         @Html.ActionLink("Read", "Index", "Page", new { bookId = Model.BookId, pageNum = 1 }, new { @class = "btn btn-primary" })
     }
+
+    @Html.ActionLink("View Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
+
 </div>
 
 <div class="row">

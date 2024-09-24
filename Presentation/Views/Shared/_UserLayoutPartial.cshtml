@@ -9,15 +9,29 @@
             <span class="me-2">Welcome, @UserManager.GetUserName(User)!</span>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-list"></i> 
+                    <i class="bi bi-list"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item">Favorite</a></li>
-                    <li>
-                        <form asp-controller="Account" asp-action="Logout" method="post">
-                            <button type="submit" class="dropdown-item text-danger">Logout</button>
-                        </form>
-                    </li>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Account" asp-action="AdminArea" class="text-dark text-decoration-none fs-5">
+                            <li class="dropdown-item">Enter Admin Area</li>
+                        </a>
+                    }
+
+                    <a asp-controller="Account" asp-action="Profile" class="text-dark text-decoration-none fs-5">
+                        <li class="dropdown-item">Profile</li>
+                    </a>
+
+                    <a asp-controller="MyHistory" asp-action="Index" class="text-dark text-decoration-none fs-5">
+                        <li class="dropdown-item">Favorites</li>
+                    </a>
+
+                    <a asp-controller="Account" asp-action="Logout" class="text-dark text-decoration-none fs-5">
+                        <li class="dropdown-item">Logout</li>
+                    </a>
+
                 </ul>
             </div>
         </div>

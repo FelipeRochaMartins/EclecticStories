@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Models;
 using Business.Services.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Controllers.Base;
@@ -8,6 +9,7 @@ using Presentation.Models;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class MyHistoryController : BaseController
     {
         private readonly IMapper _mapper;

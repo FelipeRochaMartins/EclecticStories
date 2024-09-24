@@ -18,9 +18,19 @@ namespace Business.Services
             return await _pageRepository.AddPageAsync(newPage);
         }
 
+        public async Task<bool> EditAsync(PageBusiness page)
+        {
+            return await _pageRepository.EditAsync(page);
+        }
+
         public async Task<PageBusiness> GetPageAsync(int bookId, int pageNum)
         {
             return await _pageRepository.GetPageAsync(bookId, pageNum);
+        }
+
+        public async Task<PageBusiness> GetPageByIdAsync(int pageId)
+        {
+            return await _pageRepository.GetPageByIdAsync(pageId);
         }
     }
 }

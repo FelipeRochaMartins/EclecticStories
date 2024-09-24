@@ -18,9 +18,19 @@ namespace Business.Services
             return await _commentaryRepository.AddCommentaryAsync(postCmt);
         }
 
+        public async Task<bool> DeleteCommentaryAsync(int id)
+        {
+            return await _commentaryRepository.DeleteCommentaryAsync(id);
+        }
+
         public async Task<List<CommentaryBusiness>> GetByBookIdAsync(int bookId)
         {
             return await _commentaryRepository.GetByBookIdAsync(bookId);
+        }
+
+        public async Task<string> GetPublisherIdAsync(int id)
+        {
+            return await _commentaryRepository.GetPublisherIdAsync(id);
         }
     }
 }

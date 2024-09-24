@@ -1,0 +1,23 @@
+﻿@model Presentation.Models.UserRoleViewModel
+
+@{
+    ViewBag.Title = "Admin Area";
+}
+
+<h2>Assign Role</h2>
+
+<form asp-action="AdminArea" method="post">
+    <div class="form-group">
+        <label for="Username">Username:</label>
+        <input type="text" class="form-control" id="Username" name="Username" placeholder="Digite o nome do usuário" required />
+    </div>
+    <div class="form-group">
+        <label for="RoleName">Role:</label>
+        <select class="form-control" id="RoleName" name="RoleName" required>
+            <option value="Admin">Admin</option>
+            <option value="Publisher">Publisher</option>
+            <option value="User">User</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Assign Role</button>
+</form>

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Business.Models;
+using Business.Services;
 using Business.Services.Base;
 using Data.Models;
 using Data.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,12 +48,14 @@ namespace Presentation.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Admin, Publisher")]
         [HttpGet]
         public IActionResult New()
         {
             return View(new BookViewModel());
         }
 
+        [Authorize(Roles = "Admin, Publisher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> New(BookViewModel model)
@@ -124,22 +128,39 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin, Publisher")]
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await _bookCoverService.DeleteBookCoverAsync(id))
+            string? userId = _userManager.GetUserId(User);
+            string? publisherId = await _bookService.GetPublisherIdAsync(id);
+
+            if (userId != null && publisherId != null)
             {
-                if (await _bookService.DeleteBookByIdAsync(id))
+                if (userId == publisherId || User.IsInRole("Admin"))
                 {
-                    PopUpInfo("Successfully deleted book");
-                    return RedirectToAction(nameof(Index));
+                    if (await _bookCoverService.DeleteBookCoverAsync(id))
+                    {
+                        if (await _bookService.DeleteBookByIdAsync(id))
+                        {
+                            PopUpInfo("Successfully deleted book");
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
+                    PopUpError("The Book Cannot Be Deleted");
+                    return RedirectToAction("Book", "Library", new { id = id });
                 }
+
+                PopUpWarning("You are not allowed to delete this book");
+                return RedirectToAction("Book", "Library", new { id = id });
             }
-            
+
             PopUpError("The Book Cannot Be Deleted");
-            return RedirectToAction("Book", new { id = id });
+            return RedirectToAction("Book", "Library", new { id = id });
         }
 
+        [Authorize(Roles = "Admin, Publisher")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -148,47 +169,64 @@ namespace Presentation.Controllers
             return View(book);
         }
 
+        [Authorize(Roles = "Admin, Publisher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BookViewModel book)
         {
-            try
-            {
-                BookBusiness bookToEdit = _mapper.Map<BookBusiness>(book);
+            string? userId = _userManager.GetUserId(User);
+            string? publisherId = await _bookService.GetPublisherIdAsync(book.BookId);
 
-                if (ModelState.IsValid)
+            if (userId != null && publisherId != null)
+            {
+                if (userId == publisherId || User.IsInRole("Admin"))
                 {
-                    if (await _bookService.Edit(bookToEdit))
+                    try
                     {
-                        if (book.Cover != null && book.Cover.Length > 0)
+                        BookBusiness bookToEdit = _mapper.Map<BookBusiness>(book);
+
+                        if (ModelState.IsValid)
                         {
-                            if (await _bookCoverService.EditBookCoverAsync(book.Cover, bookToEdit.BookId))
+                            if (await _bookService.EditAsync(bookToEdit))
                             {
-                                PopUpInfo("The book was edited with his cover");
+                                if (book.Cover != null && book.Cover.Length > 0)
+                                {
+                                    if (await _bookCoverService.EditBookCoverAsync(book.Cover, bookToEdit.BookId))
+                                    {
+                                        PopUpInfo("The book was edited with his cover");
+                                        return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                                    }
+
+                                    PopUpWarning("An error occurred while saving the book cover");
+                                    PopUpSuccess("The book was successfully edited without his cover.");
+                                    return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                                }
+
+                                PopUpSuccess("The book was successfully edited without his cover.");
                                 return RedirectToAction("Book", new { id = bookToEdit.BookId });
                             }
 
-                            PopUpWarning("An error occurred while saving the book cover");
-                            PopUpSuccess("The book was successfully edited without his cover.");
-                            return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                            PopUpError("An error occurred while editing the book");
+                            return View(book);
                         }
 
-                        PopUpSuccess("The book was successfully edited without his cover.");
-                        return RedirectToAction("Book", new { id = bookToEdit.BookId });
+                        PopUpError("An error occurred while editing the book");
+                        return View(book);
                     }
-
-                    PopUpError("An error occurred while editing the book");
-                    return View(book);
+                    catch (Exception)
+                    {
+                        PopUpError("An exception occurred while editing the book");
+                        return View(book);
+                    }
                 }
 
-                PopUpError("An error occurred while editing the book");
-                return View(book);
+                PopUpWarning("You are not allowed to edit this book");
+                return RedirectToAction("Book", "Library", new { id = book.BookId });
             }
-            catch (Exception) 
-            {
-                PopUpError("An exception occurred while editing the book");
-                return View(book);
-            }
+
+            PopUpError("The Book Cannot Be Edited");
+            return RedirectToAction("Book", "Library", new { id = book.BookId });
+
         }
     }
 }

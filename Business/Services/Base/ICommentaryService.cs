@@ -6,5 +6,7 @@ namespace Business.Services.Base
     {
         Task<bool> AddCommentaryAsync(CommentaryBusiness postCmt);
         Task<List<CommentaryBusiness>> GetByBookIdAsync(int bookId);
+        Task<bool> DeleteCommentaryAsync(int id);
+        Task<string> GetPublisherIdAsync(int id);
     }
 }

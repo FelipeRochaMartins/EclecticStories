@@ -4,6 +4,12 @@ namespace Presentation.Controllers.Base
 {
     public class BaseController : Controller
     {
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         public void PopUpInfo(string content)
         {
             TempData["info"] = "info";

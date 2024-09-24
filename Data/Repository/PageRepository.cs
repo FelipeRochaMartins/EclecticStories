@@ -53,5 +53,37 @@ namespace Data.Repository
 
             return _mapper.Map<PageBusiness>(page);
         }
+
+        public async Task<PageBusiness> GetPageByIdAsync(int pageId)
+        {
+            PageModel? page = await _context.Page
+                                    .Where(p => p.PageId == pageId)
+                                    .FirstOrDefaultAsync();
+
+            return _mapper.Map<PageBusiness>(page);
+        }
+
+        public async Task<bool> EditAsync(PageBusiness page)
+        {
+            try
+            {
+                PageModel? pageUpdate = await _context.Page.FirstOrDefaultAsync(p => p.PageId == page.PageId);
+
+                if (pageUpdate != null)
+                {
+                    _mapper.Map(page, pageUpdate);
+
+                    _context.Page.Update(pageUpdate);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

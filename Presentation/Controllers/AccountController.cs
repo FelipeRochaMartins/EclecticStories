@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Controllers.Base;
 using Presentation.Models;
+using Business.Services.Base;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Presentation.Controllers
 {
@@ -9,11 +12,70 @@ namespace Presentation.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMyEmailSender _myEmailSender;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, IMyEmailSender myEmailSender)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
+            _myEmailSender = myEmailSender;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+
+                PopUpSuccess("Your email has been confirmed");
+                return View("ConfirmEmail"); 
+            }
+            else
+            {
+                PopUpError("Error in email confirmation");
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendConfirmationEmail()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
+
+                await _myEmailSender.SendEmailAsync(user.Email, "Confirm your email", $"Please confirm your email by clicking here: <a href='{confirmationLink}'>link</a>");
+
+                PopUpInfo("Confirmation email resent. Please check your inbox.");
+                return RedirectToAction("Profile");
+            }
+
+            PopUpInfo("Your email has already been confirmed");
+            return RedirectToAction("Profile");
         }
 
         public IActionResult Login()
@@ -55,8 +117,8 @@ namespace Presentation.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             var username = User.Identity?.Name;
@@ -83,13 +145,95 @@ namespace Presentation.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent : false);
-                    PopUpSuccess($"User {user.UserName} created successfully");
-                    return RedirectToAction(nameof(HomeController.Index), "Home");
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+
+                    await _myEmailSender.SendEmailAsync(model.Email, "Confirm your email",
+                        $"Please confirm your account by clicking this link: <a href='{confirmationLink}'>link</a>");
+
+                    PopUpSuccess($"User {user.UserName} created successfully. Please confirm your email before logging in.");
+                    return RedirectToAction("Login", "Account");
                 }
                 ModelState.AddModelError(string.Empty, "Error in registration");
             }
             return View(model);
         }
+
+        [Authorize (Roles = "Admin")]
+        [HttpGet]
+        public IActionResult AdminArea()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminArea(UserRoleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(model.Username);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "User not found.");
+                    return View(model);
+                }
+
+                var roleExists = await _roleManager.RoleExistsAsync(model.RoleName);
+                if (!roleExists)
+                {
+                    ModelState.AddModelError("", "Role don't exist.");
+                    return View(model);
+                }
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (currentRoles.Any())
+                {
+                    var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                    if (!removeResult.Succeeded)
+                    {
+                        ModelState.AddModelError("", "Error when removing existing roles.");
+                        return View(model);
+                    }
+                }
+
+                var result = await _userManager.AddToRoleAsync(user, model.RoleName);
+                if (result.Succeeded)
+                {
+                    PopUpSuccess($"Role {model.RoleName} successfully assigned to user {model.Username}");
+                    return View();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Error when assigning role.");
+                }
+            }
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var model = new UserProfileViewModel
+            {
+                Username = user.UserName,
+                Email = user.Email
+            };
+
+            return View(model);
+        }
+
+
+
     }
 }
