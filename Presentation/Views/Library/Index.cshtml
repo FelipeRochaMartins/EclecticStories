@@ -1,5 +1,6 @@
 ﻿@model Presentation.Models.BookViewModelList
 @inject IBookCoverService _bookCoverService
+@inject UserManager<IdentityUser> _userManager;
 
 @{
     ViewData["Title"] = "Index";
@@ -7,9 +8,12 @@
 
 <h1>Library</h1>
 
-<p>
-    <a class="btn btn-primary" asp-action="New">New Book</a>
-</p>
+@if (User.IsInRole("Admin") || User.IsInRole("Publisher"))
+{
+    <p>
+        <a class="btn btn-primary" asp-action="New">New Book</a>
+    </p>
+}
 
 <form asp-action="Index" method="get" class="mb-4">
     <div class="input-group">

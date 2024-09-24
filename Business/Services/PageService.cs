@@ -32,5 +32,10 @@ namespace Business.Services
         {
             return await _pageRepository.GetPageByIdAsync(pageId);
         }
+
+        public async Task<(List<PageBusiness> Pages, int totalCount)> GetPagedPagesAsync(int bookId, int pageNumber, int pageSize)
+        {
+            return await _pageRepository.GetPagedPagesAsync(bookId, pageNumber, pageSize);
+        }
     }
 }

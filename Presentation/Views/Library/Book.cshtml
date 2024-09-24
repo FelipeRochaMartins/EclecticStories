@@ -65,6 +65,8 @@
     @if (Model.PagesCount != null)
     {
         @Html.ActionLink("Read", "Index", "Page", new { bookId = Model.BookId, pageNum = 1 }, new { @class = "btn btn-primary" })
+
+        @Html.ActionLink("View all Pages", "BookPages", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })
     }
 
     @Html.ActionLink("View Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-primary" })

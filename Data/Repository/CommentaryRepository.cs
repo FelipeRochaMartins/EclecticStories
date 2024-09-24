@@ -36,6 +36,18 @@ namespace Data.Repository
             }
         }
 
+        public async Task<string> GetPublisherIdAsync(int id)
+        {
+            string? publisherId = await _context.Commentary.Where(c => c.CommentId == id).Select(c => c.PublisherId).FirstOrDefaultAsync();
+
+            if (publisherId != null)
+            {
+                return publisherId;
+            }
+
+            return string.Empty;
+        }
+
         public async Task<List<CommentaryBusiness>> GetByBookIdAsync(int bookId)
         {
             var commentsModel =   await _context.Commentary
@@ -68,16 +80,6 @@ namespace Data.Repository
             }
         }
 
-        public async Task<string> GetPublisherIdAsync(int id)
-        {
-            string? publisherId = await _context.Commentary.Where(c => c.CommentId == id).Select(c => c.PublisherId).FirstOrDefaultAsync();
-
-            if (publisherId != null)
-            {
-                return publisherId;
-            }
-
-            return string.Empty;
-        }
+        
     }
 }

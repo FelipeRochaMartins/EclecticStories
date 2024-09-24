@@ -39,6 +39,21 @@ namespace Data.Repository
             }
         }
 
+        public async Task<int> GetTotalPagesAsync(int id)
+        {
+            int? totalPages = await _context.Book
+                                    .Where(b => b.BookId == id)
+                                    .Select(b => b.PagesCount)
+                                    .FirstOrDefaultAsync();
+
+            if (totalPages == null)
+            {
+                return 0;
+            }
+
+            return totalPages.Value;
+        }
+
         public async Task<(List<BookBusiness> Book, int TotalCount)> GetBooksPagedAsync(string searchTerm, int pageNumber, int pageSize)
         {
             var query = _context.Book
@@ -92,27 +107,6 @@ namespace Data.Repository
             return string.Empty;
         }
 
-        public async Task<bool> DeleteBookByIdAsync(int id)
-        {
-            try
-            {
-                BookModel? bookDelete = await _context.Book.FirstOrDefaultAsync(b => b.BookId == id);
-
-                if (bookDelete != null)
-                {
-                    _context.Book.Remove(bookDelete);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public async Task<bool> EditAsync(BookBusiness bookToEdit)
         {
             try
@@ -138,21 +132,6 @@ namespace Data.Repository
             }
         }
 
-        public async Task<int> GetTotalPagesAsync(int id)
-        {
-            int? totalPages = await _context.Book
-                                    .Where(b => b.BookId == id)
-                                    .Select(b => b.PagesCount)
-                                    .FirstOrDefaultAsync();
-
-            if (totalPages == null)
-            {
-                return 0;
-            }
-
-            return totalPages.Value;
-        }
-
         public async Task<bool> UpdatePagesCountAsync(int id, int count)
         {
             var book = await _context.Book.FindAsync(id);
@@ -167,6 +146,27 @@ namespace Data.Repository
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<bool> DeleteBookByIdAsync(int id)
+        {
+            try
+            {
+                BookModel? bookDelete = await _context.Book.FirstOrDefaultAsync(b => b.BookId == id);
+
+                if (bookDelete != null)
+                {
+                    _context.Book.Remove(bookDelete);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

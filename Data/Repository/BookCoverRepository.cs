@@ -9,9 +9,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 namespace Data.Repository
 {

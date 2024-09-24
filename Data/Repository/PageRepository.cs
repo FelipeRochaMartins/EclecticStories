@@ -63,6 +63,31 @@ namespace Data.Repository
             return _mapper.Map<PageBusiness>(page);
         }
 
+        public async Task<(List<PageBusiness> Pages, int totalCount)> GetPagedPagesAsync(int bookId, int pageNumber, int pageSize)
+        {
+            var query = _context.Page
+                                .Where(p => p.BookId == bookId)
+                                .Select(p => new PageBusiness
+                                {
+                                    BookId = p.BookId,
+                                    PageId = p.PageId,
+                                    PageNumber = p.PageNumber,
+                                    Title = p.Title,
+                                    CreatedDate = p.CreatedDate,
+                                    Content = string.Empty
+                                });
+
+            int total = await query.CountAsync();
+
+            List<PageBusiness> pages = await query
+                                            .OrderBy(p => p.PageNumber)
+                                            .Skip((pageNumber - 1) * pageSize)
+                                            .Take(pageSize)
+                                            .ToListAsync();
+
+            return (pages, total);
+        }
+
         public async Task<bool> EditAsync(PageBusiness page)
         {
             try
@@ -85,5 +110,6 @@ namespace Data.Repository
                 return false;
             }
         }
+
     }
 }

@@ -5,6 +5,8 @@ using Presentation.Controllers.Base;
 using Presentation.Models;
 using Business.Services.Base;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -41,6 +43,8 @@ namespace Presentation.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "User");
+
+                await UpdateUserCookie(user);
 
                 PopUpSuccess("Your email has been confirmed");
                 return View("ConfirmEmail"); 
@@ -219,6 +223,8 @@ namespace Presentation.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
+            await UpdateUserCookie(user);
+
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -233,7 +239,19 @@ namespace Presentation.Controllers
             return View(model);
         }
 
+        private async Task UpdateUserCookie(IdentityUser user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
 
+            var claims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
 
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(120) 
+            };
+
+            await _signInManager.SignInWithClaimsAsync(user, authProperties, claims);
+        }
     }
 }

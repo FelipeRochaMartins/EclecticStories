@@ -1,0 +1,49 @@
+﻿@model PageViewModelList
+@{
+    ViewData["Title"] = "Book Pages";
+
+    int index = 0;
+}
+
+<div class="container">
+    <h2>Páginas do Livro</h2>
+
+    @foreach (var p in Model.Pages)
+    {
+        var bgColorClass = index % 2 == 0 ? "bg-light" : "bg-secondary text-white";
+        index++;
+
+        <div class="col-12 p-0 @bgColorClass" style="margin-bottom: 0; margin-top: 0;">
+            <a class="text-decoration-none text-black d-block p-3" asp-action="Index" asp-controller="Page" asp-route-bookId="@p.BookId" asp-route-pageNum="@p.PageNumber">
+                <span>@p.PageNumber - @p.Title (@p.CreatedDate?.ToString("dd/MM/yyyy"))</span>
+            </a>
+        </div>
+    }
+
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center">
+            @if (Model.HasPreviousPage)
+            {
+                <a class="btn btn-primary mx-1" asp-action="BookPages" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-bookId="@ViewBag.BookId">Previous</a>
+            }
+            else
+            {
+                <button disabled class="btn btn-primary mx-1">Previous</button>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <a class="page-link" asp-action="BookPages" asp-route-pageNumber="@i" asp-route-bookId="@ViewBag.BookId">@i</a>
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <a class="btn btn-primary mx-1" asp-action="BookPages" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-bookId="@ViewBag.BookId">Next</a>
+            }
+            else
+            {
+                <button disabled class="btn btn-primary mx-1">Next</button>
+            }
+        </div>
+    </div>
+</div>

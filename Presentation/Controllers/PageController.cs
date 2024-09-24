@@ -54,6 +54,34 @@ namespace Presentation.Controllers
             return RedirectToAction("Book", "Library", new { id = bookId });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> BookPages(int bookId, int pageNumber = 1, int pageSize = 2)
+        {
+            ViewBag.BookId = bookId;
+
+            var (pages, totalCount) = await _pageService.GetPagedPagesAsync(bookId, pageNumber, pageSize);
+
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var pageViewModelList = new PageViewModelList
+            {
+                Pages = pages.Select(p => new PageViewModel
+                {
+                    PageId = p.PageId,
+                    BookId = p.BookId,
+                    Title = p.Title,
+                    PageNumber = p.PageNumber,
+                    CreatedDate = p.CreatedDate
+                }).ToList(),
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return View(pageViewModelList);
+        }
+
         [Authorize(Roles = "Admin, Publisher")]
         [HttpGet]
         public IActionResult New(int bookId)
