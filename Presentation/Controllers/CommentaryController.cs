@@ -104,7 +104,7 @@ namespace Presentation.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int bId)
         {
             string? userId = _userManager.GetUserId(User);
             string? publisherId = await _commentaryService.GetPublisherIdAsync(id);
@@ -116,19 +116,19 @@ namespace Presentation.Controllers
                     if (await _commentaryService.DeleteCommentaryAsync(id))
                     {
                         PopUpInfo("Comment deleted");
-                        return RedirectToAction("Index", "Library");
+                        return RedirectToAction("Index", "Commentary", new { bookId = bId });
                     }
 
                     PopUpError("The Comment Cannot Be Deleted");
-                    return RedirectToAction("Index", "Library");
+                    return RedirectToAction("Index", "Commentary", new { bookId = bId });
                 }
 
                 PopUpWarning("You are not allowed to delete this comment");
-                return RedirectToAction("Index", "Library");
+                return RedirectToAction("Index", "Commentary", new { bookId = bId });
             }
 
             PopUpError("The Comment Cannot Be Deleted");
-            return RedirectToAction("Index", "Library");
+            return RedirectToAction("Index", "Commentary", new { bookId = bId });
         }
     }
 }

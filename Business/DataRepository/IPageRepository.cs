@@ -8,6 +8,8 @@ namespace Business.DataRepository
         Task<(List<PageBusiness> Pages, int totalCount)> GetPagedPagesAsync(int bookId, int pageNumber, int pageSize);
         Task<PageBusiness> GetPageAsync(int bookId, int pageId);
         Task<PageBusiness> GetPageByIdAsync(int pageId);
+        Task<int> GetTotalPagesAsync(int bookId);
+
         Task<bool> EditAsync(PageBusiness page);
     }
 }

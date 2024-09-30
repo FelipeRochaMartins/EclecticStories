@@ -37,5 +37,58 @@ namespace Business.Services
         {
             return await _pageRepository.GetPagedPagesAsync(bookId, pageNumber, pageSize);
         }
+
+        public async Task<int> GetTotalPagesAsync(int bookId)
+        {
+            return await _pageRepository.GetTotalPagesAsync(bookId);
+        }
+
+        public string TimeAgo(DateTime? dateTime)
+        {
+            if (dateTime.HasValue)
+            {
+                DateTime UpdatedTime = (DateTime)dateTime;
+
+                TimeSpan timeSpan = DateTime.Now - UpdatedTime;
+
+                if (timeSpan.TotalSeconds < 60)
+                {
+                    return $"{timeSpan.Seconds} second{(timeSpan.Seconds == 1 ? "" : "s")} ago";
+                }
+                else if (timeSpan.TotalMinutes < 60)
+                {
+                    return $"{timeSpan.Minutes} minute{(timeSpan.Minutes == 1 ? "" : "s")} ago";
+                }
+                else if (timeSpan.TotalHours < 24)
+                {
+                    return $"{timeSpan.Hours} hour{(timeSpan.Hours == 1 ? "" : "s")} ago";
+                }
+                else if (timeSpan.TotalDays < 30)
+                {
+                    return $"{timeSpan.Days} day{(timeSpan.Days == 1 ? "" : "s")} ago";
+                }
+                else if (timeSpan.TotalDays < 365)
+                {
+                    return $"{timeSpan.Days / 30} month{(timeSpan.Days / 30 == 1 ? "" : "s")} ago";
+                }
+                else
+                {
+                    return $"{timeSpan.Days / 365} year{(timeSpan.Days / 365 == 1 ? "" : "s")} ago";
+                }
+            }
+            else
+            {
+                return "Not Found";
+            }
+
+
+        }
+        public string LimitString(string input, int maxLength)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input.Length <= maxLength ? input : input.Substring(0, maxLength) + "...";
+        }
     }
 }

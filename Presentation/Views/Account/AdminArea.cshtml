@@ -4,20 +4,37 @@
     ViewBag.Title = "Admin Area";
 }
 
-<h2>Assign Role</h2>
+<div class="container-fluid mt-lg-4 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4 card border-blue">
+            <div class="card-body">
+                <h2 class="card-title" style="color: #004aad;">Assign Role</h2>
+                <hr style="color: #004aad;">
+                <form asp-action="AdminArea" method="post">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="Username">Username</label>
+                                <input type="text" class="form-control border-blue" id="Username" name="Username" placeholder="Digite o nome do usuário" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="RoleName">Role</label>
+                                <select class="form-control border-blue" id="RoleName" name="RoleName" required>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Publisher">Publisher</option>
+                                    <option value="User">User</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-<form asp-action="AdminArea" method="post">
-    <div class="form-group">
-        <label for="Username">Username:</label>
-        <input type="text" class="form-control" id="Username" name="Username" placeholder="Digite o nome do usuário" required />
+                    <div class="row mb-3">
+                        <div class="col-auto mx-auto">
+                            <button type="submit" class="btn btn-pri-blue">Assign Role</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="RoleName">Role:</label>
-        <select class="form-control" id="RoleName" name="RoleName" required>
-            <option value="Admin">Admin</option>
-            <option value="Publisher">Publisher</option>
-            <option value="User">User</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Assign Role</button>
-</form>
+</div>

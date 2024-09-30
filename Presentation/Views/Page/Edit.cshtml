@@ -4,37 +4,43 @@
     ViewData["Title"] = "Edit Page " + Model.PageNumber;
 }
 
-<h1>Edit Page Number @Model.PageNumber</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6 card border-blue">
+            <div class="card-body">
+                <h4 class="card-title" style="color: #004aad;">Edit Page Number @Model.PageNumber</h4>
+                <hr style="color: #004aad;">
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input hidden asp-for="BookId" class="form-control" />
-            <input hidden asp-for="PageId" class="form-control" />
-            <input hidden asp-for="PageNumber" class="form-control" />
-            <input hidden asp-for="CreatedDate" class="form-control" />
+                    <input hidden asp-for="BookId" class="form-control" />
+                    <input hidden asp-for="PageId" class="form-control" />
+                    <input hidden asp-for="PageNumber" class="form-control" />
+                    <input hidden asp-for="CreatedDate" class="form-control" />
 
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                    <div class="form-group mb-3">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control border-blue" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Content" class="control-label"></label>
+                        <textarea asp-for="Content" class="form-control border-blue" rows="10"></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <div class="d-flex gap-3">
+                                @Html.ActionLink("Return", "Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber }, new { @class = "btn btn-sec-black" })
+                                <input type="submit" value="Save" class="btn btn-pri-blue" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    @Html.ActionLink("Return", "Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber }, new { @class = "btn btn-primary" })
-</div>
-

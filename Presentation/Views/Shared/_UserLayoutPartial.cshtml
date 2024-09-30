@@ -6,41 +6,39 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="d-flex align-items-center">
-            <span class="me-2">Welcome, @UserManager.GetUserName(User)!</span>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-list"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <span class="mx-3" style="color: #004aad;">Welcome, <span style="color: #000;">@UserManager.GetUserName(User)</span>!</span>
 
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a asp-controller="Account" asp-action="AdminArea" class="text-dark text-decoration-none fs-5">
-                            <li class="dropdown-item">Enter Admin Area</li>
-                        </a>
-                    }
+            <div class="hamburger-container">
+                <input type="checkbox" id="hamburgerToggle" class="d-none">
+                <label for="hamburgerToggle" class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
 
-                    <a asp-controller="Account" asp-action="Profile" class="text-dark text-decoration-none fs-5">
-                        <li class="dropdown-item">Profile</li>
-                    </a>
-
-                    <a asp-controller="MyHistory" asp-action="Index" class="text-dark text-decoration-none fs-5">
-                        <li class="dropdown-item">Favorites</li>
-                    </a>
-
-                    <a asp-controller="Account" asp-action="Logout" class="text-dark text-decoration-none fs-5">
-                        <li class="dropdown-item">Logout</li>
-                    </a>
-
-                </ul>
+                <div class="dropdown-menu-custom">
+                    <ul style="color: #004aad;">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li><a asp-controller="Account" asp-action="AdminArea">Admin</a></li>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("Publisher"))
+                        {
+                            <li><a asp-controller="Library" asp-action="New">Publish</a></li>
+                        }
+                        <li><a asp-controller="Account" asp-action="Profile">Profile</a></li>
+                        <li><a asp-controller="MyHistory" asp-action="Index">Favorites</a></li>
+                        <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     }
     else
     {
         <div class="d-flex">
-            <a class="btn btn-primary me-2" asp-controller="Account" asp-action="Register">Register</a>
-            <a class="btn btn-secondary" asp-controller="Account" asp-action="Login">Login</a>
+            <a class="btn btn-pri-blue me-2" asp-controller="Account" asp-action="Register">Register</a>
+            <a class="btn btn-sec-black" asp-controller="Account" asp-action="Login">Login</a>
         </div>
     }
 </div>

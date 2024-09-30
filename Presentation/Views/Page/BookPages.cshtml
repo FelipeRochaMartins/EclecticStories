@@ -1,49 +1,100 @@
 ﻿@model PageViewModelList
+@inject IBookService _bookService;
+@inject IPageService _pageService
 @{
     ViewData["Title"] = "Book Pages";
 
-    int index = 0;
+    string bookName = await _bookService.GetBookNameByIdAsync(ViewBag.BookId);
 }
 
-<div class="container">
-    <h2>Páginas do Livro</h2>
+<div class="container col-12 col-md-10 col-lg-8 mb-5 mt-5">
+    <div class="card border-blue">
+        <div class="card-body pb-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="card-title my-2" style="color: #004aad;">@bookName Pages</h4>
+                @Html.ActionLink("Return", "Book", "Library", new { id = ViewBag.BookId }, new { @class = "btn btn-sec-black ms-2" })
+            </div>
+            <hr style="color: #004aad;">
 
-    @foreach (var p in Model.Pages)
-    {
-        var bgColorClass = index % 2 == 0 ? "bg-light" : "bg-secondary text-white";
-        index++;
-
-        <div class="col-12 p-0 @bgColorClass" style="margin-bottom: 0; margin-top: 0;">
-            <a class="text-decoration-none text-black d-block p-3" asp-action="Index" asp-controller="Page" asp-route-bookId="@p.BookId" asp-route-pageNum="@p.PageNumber">
-                <span>@p.PageNumber - @p.Title (@p.CreatedDate?.ToString("dd/MM/yyyy"))</span>
-            </a>
+            <div class="row mb-2">
+                @foreach (var p in Model.Pages)
+                {
+                    <div class="col-12 col-lg-6 mb-2">
+                        <a class="text-decoration-none d-block p-1 position-relative pag-hover"
+                           asp-action="Index"
+                           asp-controller="Page"
+                           asp-route-bookId="@p.BookId"
+                           asp-route-pageNum="@p.PageNumber">
+                            <span class="fw-bold me-2" style="max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #004aadcc;">
+                                Chapter @p.PageNumber - @_pageService.LimitString(p.Title, 20)
+                            </span>
+                            <span class="text-muted float-end">@_pageService.TimeAgo(p.CreatedDate)</span>
+                        </a>
+                        @if (Model.Pages.IndexOf(p) < Model.Pages.Count - 1)
+                        {
+                            <hr class="my-1" style="color: #004aad66;">
+                        }
+                    </div>
+                }
+            </div>
         </div>
-    }
+    </div>
 
-    <div class="container">
-        <div class="d-flex justify-content-center align-items-center">
-            @if (Model.HasPreviousPage)
+
+
+    <div class="d-flex justify-content-center mb-1 mt-3">
+        <ul class="pagination pagination-sm">
+            @if (Model.PageNumber > 1)
             {
-                <a class="btn btn-primary mx-1" asp-action="BookPages" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-bookId="@ViewBag.BookId">Previous</a>
-            }
-            else
-            {
-                <button disabled class="btn btn-primary mx-1">Previous</button>
+                <li class="page-item">
+                    <a class="page-link btn-pri-blue"
+                       asp-action="BookPages"
+                       asp-route-pageNumber="@(Model.PageNumber - 1)"
+                       asp-route-bookId="@ViewBag.BookId">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                </li>
             }
 
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
-                <a class="page-link" asp-action="BookPages" asp-route-pageNumber="@i" asp-route-bookId="@ViewBag.BookId">@i</a>
+                if (i == 1 || i == Model.TotalPages ||
+                (i >= Model.PageNumber - 1 && i <= Model.PageNumber + 1))
+                {
+                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                        <a class="page-link btn-pri-blue"
+                           asp-action="BookPages"
+                           asp-route-pageNumber="@i"
+                           asp-route-bookId="@ViewBag.BookId">
+                            @i
+                        </a>
+                    </li>
+                }
+                else if (i == 2 && Model.PageNumber > 3)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                else if (i == Model.TotalPages - 1 && Model.PageNumber < Model.TotalPages - 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
             }
 
-            @if (Model.HasNextPage)
+            @if (Model.PageNumber < Model.TotalPages)
             {
-                <a class="btn btn-primary mx-1" asp-action="BookPages" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-bookId="@ViewBag.BookId">Next</a>
+                <li class="page-item">
+                    <a class="page-link btn-pri-blue"
+                       asp-action="BookPages"
+                       asp-route-pageNumber="@(Model.PageNumber + 1)"
+                       asp-route-bookId="@ViewBag.BookId">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </li>
             }
-            else
-            {
-                <button disabled class="btn btn-primary mx-1">Next</button>
-            }
-        </div>
+        </ul>
     </div>
 </div>

@@ -3,82 +3,99 @@
 @inject UserManager<IdentityUser> _userManager;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Books";
+
 }
 
-<h1>Library</h1>
-
-@if (User.IsInRole("Admin") || User.IsInRole("Publisher"))
-{
-    <p>
-        <a class="btn btn-primary" asp-action="New">New Book</a>
-    </p>
-}
-
-<form asp-action="Index" method="get" class="mb-4">
+<form asp-action="Index" method="get" class="my-5">
     <div class="input-group">
         <input type="text" name="searchTerm" class="form-control" placeholder="Search books..." value="@ViewData["CurrentFilter"]" />
-        <button type="submit" class="btn btn-outline-secondary">Search</button>
+        <button type="submit" class="btn btn-outline-secondary custom-button">Search</button>
     </div>
 </form>
 
-<div class="row">
-    @if (Model.Books != null && Model.Books.Any())
-    {
-        @foreach (var item in Model.Books)
+<div class="container col-8">
+    <div class="row">
+        @if (Model.Books != null && Model.Books.Any())
         {
-            string coverPath = await _bookCoverService.GetBookCoverAsync(item.BookId);
+            @foreach (var item in Model.Books)
+            {
+                string coverPath = await _bookCoverService.GetBookCoverAsync(item.BookId);
 
-            var imgSrc = string.IsNullOrEmpty(coverPath)
-            ? Url.Content("~/images/placeholder.jpg")
-            : Url.Content("~/images/" + coverPath);
+                var imgSrc = string.IsNullOrEmpty(coverPath)
+                ? Url.Content("~/images/placeholder.png")
+                : Url.Content("~/images/" + coverPath);
 
-            <div class="col-sm-6 col-md-3 col-lg-2 mb-4">
-                <div class="card h-100">
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4 mx-auto">
+                    <div class="card h-75">
 
-                    <a asp-action="Book" asp-route-id="@item.BookId">
-                        <img src="@imgSrc"
-                             data-book-id="@item.BookId"
-                             class="card-img-top"
-                             alt="Cover for @item.Name"
-                             style="max-width: 100%; height: auto; aspect-ratio: 3.5 / 5; object-fit: cover;" />
-                    </a>
+                        <a asp-action="Book" asp-route-id="@item.BookId">
+                            <img src="@imgSrc"
+                                 data-book-id="@item.BookId"
+                                 class="card-img-top"
+                                 alt="Cover for @item.Name"
+                                 style="max-width: 100%; height: auto; aspect-ratio: 3.5 / 5; object-fit: cover;" />
+                        </a>
 
-                    <a asp-action="Book" asp-route-id="@item.BookId" class="text-decoration-none text-black">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </h5>
+                        <a asp-action="Book" asp-route-id="@item.BookId" class="text-decoration-none text-black">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-normal fs-5">
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </h5>
+                            </div>
+                        </a>
+
                     </div>
-                    </a>
-
                 </div>
-            </div>
+            }
         }
-    }
+    </div>
 </div>
 
-<div class="d-flex justify-content-between mt-4">
+
+
+<div class="d-flex justify-content-center mt-4">
     <ul class="pagination">
         @if (Model.PageNumber > 1)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@(Model.PageSize)">Previous</a>
+                <a class="page-link btn-pri-blue" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@(Model.PageSize)">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
             </li>
         }
 
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
-            <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@(Model.PageSize)">@i</a>
-            </li>
+            if (i == 1 || i == Model.TotalPages ||
+            (i >= Model.PageNumber - 1 && i <= Model.PageNumber + 1))
+            {
+                <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                    <a class="page-link btn-pri-blue" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@(Model.PageSize)">@i</a>
+                </li>
+            }
+            else if (i == 2 && Model.PageNumber > 3)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            }
+            else if (i == Model.TotalPages - 1 && Model.PageNumber < Model.TotalPages - 2)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            }
         }
 
         @if (Model.PageNumber < Model.TotalPages)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@(Model.PageSize)">Next</a>
+                <a class="page-link btn-pri-blue" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@(Model.PageSize)">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
             </li>
         }
     </ul>
 </div>
+

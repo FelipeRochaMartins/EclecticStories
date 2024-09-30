@@ -1,6 +1,6 @@
 ﻿@model Presentation.Models.PageViewModel
 @inject IBookService _bookService;
-@inject UserManager<IdentityUser> _userManager
+@inject UserManager<IdentityUser> _userManager;
 
 @{
     ViewData["Title"] = Model.Title;
@@ -16,38 +16,56 @@
     }
 </style>
 
-<div class="row-cols-auto container">
-    <h2 class="text-dark">@Model.PageNumber - @Model.Title</h2>
-    <p class="text-black preserve-format">@Model.Content</p>
+<div class="container col-lg-9 col-md-10 col-sm-12">
+    <div class="card border-blue-less border-t-b-none">
+        <div class="card-body text-center mt-5">
+            <h2 style="color: #004aad;">Chapter @Model.PageNumber</h2>
+            <h4 style="color: #004aad;">@Model.Title</h4>
 
-    @if (publisherId == userId || User.IsInRole("Admin"))
-    {
-        @Html.ActionLink("Edit the Page", "Edit", "Page", new { pageId = Model.PageId }, new { @class = "btn btn-danger" })
-    }
+            @if (publisherId == userId || User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Edit the Page", "Edit", "Page", new { pageId = Model.PageId }, new { @class = "btn btn-danger mt-3" })
+            }
 
-</div>
+            <hr class="col-10 col-lg-8 mt-5 mx-auto" style="color: #004aad66;">
+        </div>
+    </div>
 
-<div class="container">
-    <div class="d-flex justify-content-center align-items-center">
-        @if (hasPrevious)
-        {
-            @Html.ActionLink("Previous", "Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber - 1 }, new { @class = "btn btn-primary mx-1" })
-        }
-        else
-        {
-            <button disabled class="btn btn-primary mx-1">Previous</button>
-        }
+    <div class="card border-blue-less border-t-b-none d-flex flex-column flex-grow-1">
+        <div class="card-body">
+            <div class="col-lg-10 col-md-12 mx-auto">
+                <p class="text-black preserve-format">@Model.Content</p>
+            </div>
+        </div>
 
-        @Html.ActionLink("Return to Book", "Book", "Library", new { id = Model.BookId }, new { @class = "btn btn-primary mx-1" })
+        <div class="d-flex flex-row justify-content-center align-items-center mt-4 mb-5">
+            @if (hasPrevious)
+            {
+                <a href="@Url.Action("Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber - 1 })" class="btn btn-primary mx-1" style="text-decoration: none;">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            }
+            else
+            {
+                <button disabled class="btn btn-primary mx-1"><i class="bi bi-arrow-left"></i></button>
+            }
 
-        @if (hasNext)
-        {
-            @Html.ActionLink("Next", "Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber + 1 }, new { @class = "btn btn-primary mx-1" })
-        }
-        else
-        {
-            <button disabled class="btn btn-primary mx-1">Next</button>
-        }
+            <a href="@Url.Action("Book", "Library", new { id = Model.BookId })" class="btn btn-primary mx-1 mt-a" style="text-decoration: none;">
+                <i class="bi bi-book"></i>
+            </a>
+
+            @if (hasNext)
+            {
+                <a href="@Url.Action("Index", "Page", new { bookId = Model.BookId, pageNum = Model.PageNumber + 1 })" class="btn btn-primary mx-1" style="text-decoration: none;">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            }
+            else
+            {
+                <button disabled class="btn btn-primary mx-1"><i class="bi bi-arrow-right"></i></button>
+            }
+        </div>
+
+
     </div>
 </div>
-

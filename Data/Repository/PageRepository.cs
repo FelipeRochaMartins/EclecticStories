@@ -88,6 +88,15 @@ namespace Data.Repository
             return (pages, total);
         }
 
+        public async Task<int> GetTotalPagesAsync(int bookId)
+        {
+            int totalPages = await _context.Page
+                                    .Where(p => p.BookId == bookId)
+                                    .CountAsync();
+
+            return totalPages;
+        }
+
         public async Task<bool> EditAsync(PageBusiness page)
         {
             try

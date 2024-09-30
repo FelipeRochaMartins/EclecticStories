@@ -1,46 +1,59 @@
 ﻿@model RegisterViewModel
 @{
-	ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register";
 }
-<h2>@ViewData["Title"].</h2>
 
-<form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-	<div asp-validation-summary="All" class="text-danger"></div>
-	
-	<div class="form-group">
-		<label asp-for="Username" class="col-md-2 control-label"></label>
-		<div class="col-md-10">
-			<input asp-for="Username" class="form-control" />
-			<span asp-validation-for="Username" class="text-danger"></span>
-		</div>
-	</div>
-	<div class="form-group">
-		<label asp-for="Email" class="col-md-2 control-label"></label>
-		<div class="col-md-10">
-			<input asp-for="Email" class="form-control" />
-			<span asp-validation-for="Email" class="text-danger"></span>
-		</div>
-	</div>
-	<div class="form-group">
-		<label asp-for="Password" class="col-md-2 control-label"></label>
-		<div class="col-md-10">
-			<input asp-for="Password" class="form-control" />
-			<span asp-validation-for="Password" class="text-danger"></span>
-		</div>
-	</div>
-	<div class="form-group">
-		<label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-		<div class="col-md-10">
-			<input asp-for="ConfirmPassword" class="form-control" />
-			<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-		</div>
-	</div>
-		<div class="form-group">
-		<div class="col-md-offset-2 col-md-10">
-			<button type="submit" class="btn btn-default">Save</button>
-		</div>
-	</div>	
-</form>
-@section Scripts{
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<div class="container mt-5 col-12 col-md-8 col-lg-6">
+    <div class="card border-blue">
+        <div class="card-body">
+            <h2 class="card-title" style="color: #004aad;">Register</h2>
+            <hr style="color: #004aad;">
+
+            <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row mb-3">
+                    <div class="col-10 mx-auto">
+                        <div class="form-group mb-3">
+                            <label asp-for="Username" class="control-label"></label>
+                            <input asp-for="Username" class="form-control border-blue" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control border-blue" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="control-label"></label>
+                            <input asp-for="Password" class="form-control border-blue" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="ConfirmPassword" class="control-label"></label>
+                            <input asp-for="ConfirmPassword" class="form-control border-blue" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-auto mx-auto">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-pri-blue w-100">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

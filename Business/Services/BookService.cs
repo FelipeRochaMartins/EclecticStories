@@ -57,6 +57,6 @@ namespace Business.Services
         public async Task<string> GetPublisherIdAsync(int id)
         {
             return  await _bookRepository.GetPublisherIdAsync(id);
-        }
+        } 
     }
 }

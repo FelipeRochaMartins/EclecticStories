@@ -1,92 +1,130 @@
 ﻿@model Business.Models.BookBusiness
 @inject IBookCoverService _bookCoverService
 @inject IHistoryService _historyService
+@inject IPageService _pageService
 @inject UserManager<IdentityUser> _userManager
 
 @{
     ViewData["Title"] = Model.Name;
-
     string coverPath = await _bookCoverService.GetBookCoverAsync(Model.BookId);
-
     var imgSrc = string.IsNullOrEmpty(coverPath)
-    ? Url.Content("~/images/placeholder.jpg")
-    : Url.Content("~/images/" + coverPath);
-
+        ? Url.Content("~/images/placeholder.png")
+        : Url.Content("~/images/" + coverPath);
     string? userId = _userManager.GetUserId(User);
 }
 
-<div class="row p-1" style="background: linear-gradient(to bottom, #000000, #ffffff); min-height: 200px; width: 100%; margin: 0;">
-    <div class="col-md-4" style="display: flex; justify-content: center; align-items: center;">
-        <img src="@imgSrc" alt="Book Cover" class="card-img-top" style="max-width: 60%; height: auto; aspect-ratio: 3.5 / 5; object-fit: cover;" />
-    </div>
+<div class="container border-blue-less border-t-b-none card p-0 col-12 col-md-10 col-lg-8 d-flex flex-column" style="min-height: 100vh;">
+    <div class="row pt-4 banner-linear m-0">
+        <div class="col-md-4 d-flex justify-content-center align-items-center p-0">
+            <img src="@imgSrc" alt="Book Cover" class="img-fluid rounded" style="width: 80%; height: auto; aspect-ratio: 3.5 / 5; object-fit: cover;" />
+        </div>
 
-    <div class="col-md-8 d-flex flex-column justify-content-center row">
-        <h4 style="font-size: 1.2rem;">@Html.DisplayFor(model => model.Name)</h4>
-        <p><strong>Author:</strong> @Html.DisplayFor(model => model.Author)</p>
+        <div class="col-md-8 d-flex flex-column justify-content-between p-4 p-md-0 p-lg-0">
+            <div class="mt-auto ">
+                <h2 class="banner-font-color text-center text-md-start">@Html.DisplayFor(model => model.Name)</h2>
+                <hr class="col-8 mx-auto mx-md-0 mt-1" style="color: #004aad66;">
+                <div class="row m-0">
+                    <div class="col-12 text-center text-md-start">
+                        <p class="mb-0">
+                            <strong class="banner-font-color-s-b">Author:</strong>
+                            <span class="banner-font-color-s">@Html.DisplayFor(model => model.Author)</span>
+                        </p>
+                    </div>
+                </div>
+                <hr class="col-4 mx-auto mx-md-0 mt-1" style="color: #004aad66;">
+                <div class="row m-0">
+                    <div class="col-12 col-md-4 d-flex justify-content-center justify-content-md-start align-items-center text-center text-md-start">
+                        <p class="responsive-font banner-font-color-l mb-0">
+                            <span class="banner-font-color">@(Model.PagesCount ?? 0)</span> Pages
+                        </p>
+                    </div>
 
-        <div class="row mb-2">
-            <div class="col-sm-4">
-                <p><strong>Pages:</strong> @Html.DisplayFor(model => model.PagesCount)</p>
+                    <div class="col-12 col-md-4 d-flex justify-content-center align-items-center text-center text-md-center vertical-separator d-none d-md-flex">
+                        <p class="responsive-font banner-font-color-l mb-0">
+                            Updated @_pageService.TimeAgo(Model.LastUpdateDate)
+                        </p>
+                    </div>
+
+                    <div class="col-12 col-md-4 d-none d-md-flex justify-content-center justify-content-md-start align-items-center vertical-separator">
+                        <p class="responsive-font banner-font-color-l mb-0">
+                            Created @_pageService.TimeAgo(Model.CreatedDate)
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-4">
-                <p><strong>Last Updated:</strong> @Html.DisplayFor(model => model.LastUpdateDate)</p>
-            </div>
-            <div class="col-sm-4">
-                <p><strong>Created Date:</strong> @Html.DisplayFor(model => model.CreatedDate)</p>
+
+            <div class="mt-4 mb-2 text-center text-md-start">
+                @if (Model.PagesCount != null)
+                {
+                    if (User.Identity.IsAuthenticated && ViewBag.LastPageRead != 0)
+                    {
+                        @Html.ActionLink("Continue Reading", "Index", "Page", new { bookId = Model.BookId, pageNum = ViewBag.LastPageRead }, new { @class = "btn btn-pri-blue me-2" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Read", "Index", "Page", new { bookId = Model.BookId, pageNum = 1 }, new { @class = "btn btn-pri-blue me-2" })
+                    }
+                    @Html.ActionLink("Pages", "BookPages", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-sec-black me-2" })
+                }
+                else
+                {
+                    <p class="banner-font-color-s">There are no pages published yet for this book.</p>
+                }
             </div>
         </div>
     </div>
-</div>
 
-<div class="mt-4">
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        @if (await _historyService.GetIsFavoriteBookAsync(userId, Model.BookId))
-        {
-            @Html.ActionLink("Remove Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-warning mx-2" })
-        }
-        else
-        {
-            @Html.ActionLink("Add as Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-primary mx-2" })
-        }
-    }
-    
-    @if (Model.PublisherId == userId || User.IsInRole("Admin"))
-    {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-primary mx-2" })
-
-        @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger mx-2" })
-
-        @Html.ActionLink("Create Page", "New", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-success mx-2" })
-    }
-
-    @if (Model.PagesCount != null)
-    {
-        @if (User.Identity.IsAuthenticated && ViewBag.LastPageRead != 0)
-        {
-            @Html.ActionLink("Continue Reading", "Index", "Page", new { bookId = Model.BookId, pageNum = ViewBag.LastPageRead }, new { @class = "btn btn-primary mx-2" })
-        }
-        else
-        {
-            @Html.ActionLink("Read", "Index", "Page", new { bookId = Model.BookId, pageNum = 1 }, new { @class = "btn btn-primary mx-2" })
-        }
-
-        @Html.ActionLink("View all Pages", "BookPages", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-primary mx-2" })
-    }
-
-    @Html.ActionLink("View Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-primary mx-2" })
-
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="mt-4">
-            <h5>Summary</h5>
-            <p class="text-justify">@Html.DisplayFor(model => model.Summary)</p>
+    <div class="row mt-0 mt-md-3 mt-lg-3">
+        <div class="mt-3 mx-3 text-center text-md-start">
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (await _historyService.GetIsFavoriteBookAsync(userId, Model.BookId))
+                {
+                    @Html.ActionLink("Remove Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-sec-black me-2" })
+                }
+                else
+                {
+                    @Html.ActionLink("Favorite", "Favorite", "MyHistory", new { bookId = Model.BookId }, new { @class = "btn btn-fav me-2" })
+                }
+            }
+            @Html.ActionLink("Comments", "Index", "Commentary", new { bookId = Model.BookId }, new { @class = "btn btn-sec-black me-2" })
+            <a asp-action="Index" class="btn btn-sec-black me-2">Return</a>
+        </div>
+        <div class="my-2 mx-3 text-center text-md-start">
+            @if (Model.PublisherId == userId || User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }, new { @class = "btn btn-pri-blue me-2" })
+                @Html.ActionLink("Delete", "Delete", new { id = Model.BookId }, new { @class = "btn btn-danger me-2" })
+                @Html.ActionLink("Create Page", "New", "Page", new { bookId = Model.BookId }, new { @class = "btn btn-success me-2" })
+            }
         </div>
     </div>
+
+
+    <div class="flex-grow-1 d-flex flex-column mb-3">
+        <h5 class="mx-4 mt-4 banner-font-color">Summary</h5>
+        <hr class="col-10 mx-auto" style="color: #004aad66;">
+        <p class="text-justify mx-5 ">@Html.DisplayFor(model => model.Summary)</p>
+        <hr class="col-8 mx-auto mb-auto" style="color: #004aad66;">
+    </div>
+
+    <div id="carouselExample" class="carousel slide mt-4 mb-5 col-12 col-md-10 col-lg-10 mx-auto" data-bs-ride="carousel">
+        <div class="carousel-inner rounded">
+            <div class="carousel-item active">
+                <img src="~/images/Banner1.png" class="d-block w-100 rounded" style="aspect-ratio: 16 / 9; object-fit: cover;" alt="Image 1">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/Banner2.png" class="d-block w-100 rounded" style="aspect-ratio: 16 / 9; object-fit: cover;" alt="Image 2">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>
-
-

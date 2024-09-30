@@ -205,6 +205,11 @@ namespace Presentation.Controllers
                 var result = await _userManager.AddToRoleAsync(user, model.RoleName);
                 if (result.Succeeded)
                 {
+                    if (model.RoleName != "User")
+                    {
+                        await _userManager.AddToRoleAsync(user, "User");
+                    }
+
                     PopUpSuccess($"Role {model.RoleName} successfully assigned to user {model.Username}");
                     return View();
                 }

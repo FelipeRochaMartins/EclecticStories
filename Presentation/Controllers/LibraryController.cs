@@ -32,7 +32,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchTerm, int pageNumber = 1, int pageSize = 3)
+        public async Task<IActionResult> Index(string searchTerm, int pageNumber = 1, int pageSize = 12)
         {
             ViewData["CurrentFilter"] = searchTerm;
 

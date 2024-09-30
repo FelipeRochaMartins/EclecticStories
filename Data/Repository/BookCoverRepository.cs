@@ -119,7 +119,10 @@ namespace Data.Repository
                 }
                 return false;
             }
-            return false;
+            else
+            {
+                return (await SaveBookCoverAsync(cover, bookId) != null);
+            }
         }
 
         public async Task<bool> DeleteBookCoverAsync(int id)

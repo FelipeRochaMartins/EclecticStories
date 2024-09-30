@@ -1,8 +1,31 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+    <div id="carouselExample" class="carousel slide mt-4 mb-5 col-12 col-md-10 col-lg-8 mx-auto" data-bs-ride="carousel">
+        <div class="carousel-inner rounded">
+            <div class="carousel-item active">
+                <img src="~/images/Banner1.png" class="d-block w-100 rounded" style="aspect-ratio: 16 / 9; object-fit: cover;" alt="Image 1">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/Banner2.png" class="d-block w-100 rounded" style="aspect-ratio: 16 / 9; object-fit: cover;" alt="Image 2">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="text-center col-12 col-md-10 col-lg-8 mx-auto mt-auto">
+        <h2 class="banner-font-color">Explore and Read</h2>
+        <h4 class="banner-font-color-s">...or read and explore?</h4>
+        <p class="banner-font-color-l">Welcome to Eclectic Stories, your ultimate playground for imagination! Dive into a vibrant collection of tales that span genres and styles, where every click leads you to a new adventure. Whether you’re craving whimsical fantasies, heartwarming dramas, or spine-tingling mysteries, we’ve got a story that’s just right for you. Join our community of curious readers and storytellers, and let the eclectic mix of narratives spark your creativity and entertain your mind. So, grab your favorite snack, get comfy, and embark on a storytelling journey that promises to surprise and delight at every turn!</p>
+    </div>
+
 </div>
